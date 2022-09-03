@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using Unity.Mathematics;
+using UnityEngine;
 using UnityEngine.Events;
 
 
@@ -200,6 +202,7 @@ namespace PhysicsBasedCharacterController
         /*  Added by Matt Bartlett 08/22    */ 
 
         [SerializeField] Animator animator;
+        [SerializeField] private CompCameraController compCamera;
 
         private float _targetSpeed;
         
@@ -208,13 +211,14 @@ namespace PhysicsBasedCharacterController
         private float _strafeParameter;
         private Vector3 _strafeParameterXZ = Vector3.zero;
         private float _animMoveSharpness = 10f;
+        
+        
 
         /*  */
 
 
         private void Awake()
         {
-            //Cursor.lockState = CursorLockMode.Locked;
             animator.applyRootMotion = false;
             
             rigidbody = this.GetComponent<Rigidbody>();
@@ -223,6 +227,11 @@ namespace PhysicsBasedCharacterController
 
             SetFriction(frictionAgainstFloor, true);
             currentLockOnSlope = lockOnSlope;
+        }
+
+        private void Start()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
 
@@ -235,8 +244,7 @@ namespace PhysicsBasedCharacterController
             sprint = input.sprint;
             crouch = input.crouch;
             _strafing = input.aimIn;
-
-            // Debug.Log(currVelocity);
+            
             /* Select idle or run animation */
             if (currVelocity.x > 0.2 || currVelocity.z > 0.2 || currVelocity.x < -0.2 || currVelocity.z < -0.2)
             {
@@ -263,7 +271,6 @@ namespace PhysicsBasedCharacterController
             MoveRotation();
             MoveJump();
             MoveAnims();
-            //Debug.Log("X: " + animator.GetFloat("StrafingX") + "        Y: " + animator.GetFloat("StrafingZ"));
 
             //gravity
             ApplyGravity();
@@ -525,14 +532,24 @@ namespace PhysicsBasedCharacterController
         {
             if (axisInput.magnitude > movementThreshold)
             {
-                if (_strafing)
+                if (_strafing && compCamera.Target == null)
                 {
+                    // Aiming strafing movement (Movement is relative to Camera Forward)
                     Vector3 strafeMoveVector = new Vector3(axisInput.x, 0, axisInput.y);
-                    strafeMoveVector = strafeMoveVector.x * characterCamera.transform.right + strafeMoveVector.z * characterCamera.transform.forward;
+                    strafeMoveVector = strafeMoveVector.x * characterCamera.transform.right +
+                                       strafeMoveVector.z * characterCamera.transform.forward;
+                    strafeMoveVector.y = 0;
+                    rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, strafeMoveVector * _targetSpeed, ref currVelocity, dampSpeedUp);
+                } else if (_strafing)
+                {
+                    // Locked on strafing movement (Movement is relative to Character forward)
+                    Vector3 strafeMoveVector = new Vector3(axisInput.x, 0, axisInput.y);
+                    strafeMoveVector = strafeMoveVector.x * transform.right +
+                                       strafeMoveVector.z * transform.forward;
                     strafeMoveVector.y = 0;
                     rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, strafeMoveVector * _targetSpeed, ref currVelocity, dampSpeedUp);
                 }
-                else
+                else // Free turning movement - no strafing (character only needs to move towards forward direction)
                 {
                     targetAngle = Mathf.Atan2(axisInput.x, axisInput.y) * Mathf.Rad2Deg + characterCamera.transform.eulerAngles.y;
                     rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, forward * _targetSpeed, ref currVelocity, dampSpeedUp);
@@ -563,8 +580,6 @@ namespace PhysicsBasedCharacterController
             animator.SetFloat("Strafing", _strafeParameter);
             animator.SetFloat("StrafingX", Mathf.Round(_strafeParameterXZ.x * 100f) / 100f);
             animator.SetFloat("StrafingZ", Mathf.Round(_strafeParameterXZ.y * 100f) / 100f);
-            
-            //Debug.Log("Strafing X: " + animator.GetFloat("StrafingX") +"StrafingZ" + animator.GetFloat("StrafingZ"));
         }
 
 
@@ -572,20 +587,31 @@ namespace PhysicsBasedCharacterController
         {
             if (_strafing)
             {
-                targetAngle = characterCamera.transform.eulerAngles.y;
                 animator.SetFloat("Strafing", 1);
+                
+                if (compCamera.Target != null) //Strafing with target
+                {
+                    // Get Target Direction
+                    Vector3 _toTarget = compCamera.Target.TargetTransform.position - characterModel.transform.position;
+                    Debug.DrawRay(transform.position, _toTarget);
+                    // Get target angle from character
+                    Quaternion lookRot = Quaternion.LookRotation(_toTarget);
+                    // Set y angle to direction of target
+                    targetAngle = lookRot.eulerAngles.y;
+                }
+                else // no target, rotate to camera aim
+                {   
+                    targetAngle = characterCamera.transform.eulerAngles.y;
+                }
             }
-            else
-            {
-                animator.SetFloat("Strafing", 0);
-            }
-
+            animator.SetFloat("Strafing", 0);
             float angle = Mathf.SmoothDampAngle(characterModel.transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, characterModelRotationSmooth);
             transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
 
             characterModel.transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            
         }
-
+        
 
         private void MoveJump()
         {
@@ -788,9 +814,5 @@ namespace PhysicsBasedCharacterController
 
         #endregion
 
-        public void setVelocity(Vector3 velocity)
-        {
-            currVelocity = velocity;
-        }
     }
 }

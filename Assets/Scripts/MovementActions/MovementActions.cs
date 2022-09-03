@@ -116,6 +116,15 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""a8006b5f-dd92-4a35-b25f-1e0c8e38c7b1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -525,6 +534,17 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
                     ""action"": ""TargetLock"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c08bb8bc-f97c-47a8-91e1-7a649db2d8be"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -577,6 +597,7 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
         m_Gameplay_AimIn = m_Gameplay.FindAction("AimIn", throwIfNotFound: true);
         m_Gameplay_Attack = m_Gameplay.FindAction("Attack", throwIfNotFound: true);
         m_Gameplay_TargetLock = m_Gameplay.FindAction("TargetLock", throwIfNotFound: true);
+        m_Gameplay_Scroll = m_Gameplay.FindAction("Scroll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -646,6 +667,7 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Gameplay_AimIn;
     private readonly InputAction m_Gameplay_Attack;
     private readonly InputAction m_Gameplay_TargetLock;
+    private readonly InputAction m_Gameplay_Scroll;
     public struct GameplayActions
     {
         private @MovementActions m_Wrapper;
@@ -660,6 +682,7 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
         public InputAction @AimIn => m_Wrapper.m_Gameplay_AimIn;
         public InputAction @Attack => m_Wrapper.m_Gameplay_Attack;
         public InputAction @TargetLock => m_Wrapper.m_Gameplay_TargetLock;
+        public InputAction @Scroll => m_Wrapper.m_Gameplay_Scroll;
         public InputActionMap Get() { return m_Wrapper.m_Gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -699,6 +722,9 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
                 @TargetLock.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnTargetLock;
                 @TargetLock.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnTargetLock;
                 @TargetLock.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnTargetLock;
+                @Scroll.started -= m_Wrapper.m_GameplayActionsCallbackInterface.OnScroll;
+                @Scroll.performed -= m_Wrapper.m_GameplayActionsCallbackInterface.OnScroll;
+                @Scroll.canceled -= m_Wrapper.m_GameplayActionsCallbackInterface.OnScroll;
             }
             m_Wrapper.m_GameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -733,6 +759,9 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
                 @TargetLock.started += instance.OnTargetLock;
                 @TargetLock.performed += instance.OnTargetLock;
                 @TargetLock.canceled += instance.OnTargetLock;
+                @Scroll.started += instance.OnScroll;
+                @Scroll.performed += instance.OnScroll;
+                @Scroll.canceled += instance.OnScroll;
             }
         }
     }
@@ -776,5 +805,6 @@ public partial class @MovementActions : IInputActionCollection2, IDisposable
         void OnAimIn(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnTargetLock(InputAction.CallbackContext context);
+        void OnScroll(InputAction.CallbackContext context);
     }
 }

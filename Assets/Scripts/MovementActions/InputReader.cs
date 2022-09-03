@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.VisualScripting;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
@@ -23,6 +24,8 @@ namespace PhysicsBasedCharacterController
         public Vector2 axisInput;
         [HideInInspector]
         public Vector2 cameraInput;
+        [HideInInspector]
+        public Vector2 mouseScroll;
         [HideInInspector]
         public bool jump;
         [HideInInspector]
@@ -57,6 +60,8 @@ namespace PhysicsBasedCharacterController
             movementActions.Gameplay.Movement.performed += ctx => OnMove(ctx);
         
             movementActions.Gameplay.Camera.performed += ctx => OnCamera(ctx);
+            
+            movementActions.Gameplay.Scroll.performed += ctx => OnScroll(ctx);
 
             movementActions.Gameplay.Jump.performed += ctx => OnJump();
             movementActions.Gameplay.Jump.canceled += ctx => JumpEnded();
@@ -74,6 +79,9 @@ namespace PhysicsBasedCharacterController
             movementActions.Gameplay.AimIn.canceled += ctx => AimCancel(ctx);
             
             movementActions.Gameplay.TargetLock.performed += ctx => TargetLock(ctx);
+            movementActions.Gameplay.TargetLock.canceled += ctx => TargetLockReleased(ctx);
+            
+            movementActions.Gameplay.Scroll.performed += ctx => TargetLock(ctx);
             movementActions.Gameplay.TargetLock.canceled += ctx => TargetLockReleased(ctx);
         }
 
@@ -215,6 +223,13 @@ namespace PhysicsBasedCharacterController
         public void OnCamera(InputAction.CallbackContext ctx)
         {
             cameraInput = ctx.ReadValue<Vector2>();
+            GetDeviceNew(ctx);
+        }
+        
+        
+        public void OnScroll(InputAction.CallbackContext ctx)
+        {
+            mouseScroll = ctx.ReadValue<Vector2>();
             GetDeviceNew(ctx);
         }
 
