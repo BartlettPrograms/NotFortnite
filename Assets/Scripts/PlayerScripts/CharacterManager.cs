@@ -212,7 +212,10 @@ namespace PhysicsBasedCharacterController
         private Vector3 _strafeParameterXZ = Vector3.zero;
         private float _animMoveSharpness = 10f;
         
-        
+        // Animator State names
+        // Crouching
+        private const string _standToCrouch = "Base Layer.Base Crouching";
+        private const string _crouchToStand = "Base Layer.Base Standing";
 
         /*  */
 
@@ -491,14 +494,15 @@ namespace PhysicsBasedCharacterController
         {
             if (crouch && isGrounded)
             {
-                isCrouch = true;
-
-                if (meshCharacterCrouch != null && meshCharacter != null)
+                /*if (meshCharacterCrouch != null && meshCharacter != null)
                 {
                     meshCharacter.SetActive(false);
                     meshCharacterCrouch.SetActive(true);
-                }
-
+                }*/
+                if (!isCrouch)
+                    animator.CrossFadeInFixedTime(_standToCrouch, 0.25f);
+                
+                isCrouch = true;
                 float newHeight = originalColliderHeight * crouchHeightMultiplier;
                 collider.height = newHeight;
                 collider.center = new Vector3(0f, -newHeight * crouchHeightMultiplier, 0f);
@@ -507,14 +511,15 @@ namespace PhysicsBasedCharacterController
             }
             else
             {
-                isCrouch = false;
-
-                if (meshCharacterCrouch != null && meshCharacter != null)
+                /*if (meshCharacterCrouch != null && meshCharacter != null)
                 {
                     meshCharacter.SetActive(true);
                     meshCharacterCrouch.SetActive(false);
-                }
-
+                }*/
+                if (isCrouch)
+                    animator.CrossFadeInFixedTime(_crouchToStand, 0.25f);
+                
+                isCrouch = false;
                 collider.height = originalColliderHeight;
                 collider.center = Vector3.zero;
 
@@ -524,7 +529,8 @@ namespace PhysicsBasedCharacterController
 
         private void MoveSpeed()
         {
-            if (!_strafing && sprint) { _targetSpeed = axisInput != Vector2.zero ? sprintSpeed : 0; }
+            if (isCrouch) { _targetSpeed = axisInput != Vector2.zero ? movementSpeed * crouchSpeedMultiplier : 0; }
+            else if (!_strafing && sprint) { _targetSpeed = axisInput != Vector2.zero ? sprintSpeed : 0; }
             else if (_strafing) { _targetSpeed = axisInput != Vector2.zero ? strafeSpeed : 0; }
             else { _targetSpeed = axisInput != Vector2.zero ? movementSpeed : 0; }
         }
@@ -580,6 +586,7 @@ namespace PhysicsBasedCharacterController
             animator.SetFloat("Strafing", _strafeParameter);
             animator.SetFloat("StrafingX", Mathf.Round(_strafeParameterXZ.x * 100f) / 100f);
             animator.SetFloat("StrafingZ", Mathf.Round(_strafeParameterXZ.y * 100f) / 100f);
+            animator.SetFloat("Forward", rigidbody.velocity.magnitude);
         }
 
 
