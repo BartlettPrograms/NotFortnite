@@ -52,13 +52,13 @@ public class SMB_Event : StateMachineBehaviour
         m_normalizedTimeUncapped = stateInfo.normalizedTime;
         m_normalizedTime = m_hasParam ? animator.GetFloat(m_motionTime) : GetNormalizedTime(stateInfo);
         m_currentFrame = GetCurrentFrame(m_totalFrames, m_normalizedTime);
-
         if (m_eventCurrator != null)
             foreach (SMBEvent _smbEvent in Events)
                 if (!_smbEvent.fired)
                 {
                     if (_smbEvent.timing == SMBTiming.OnUpdate)
                     {
+                        //Debug.Log(m_currentFrame + "   >=   " + _smbEvent.onUpdateFrame);
                         if (m_currentFrame >= _smbEvent.onUpdateFrame)
                         {
                             _smbEvent.fired = true;
@@ -85,6 +85,7 @@ public class SMB_Event : StateMachineBehaviour
                 {
                     _smbEvent.fired = true;
                     m_eventCurrator.Event.Invoke(_smbEvent.eventName);
+                    //Debug.Log(_smbEvent.eventName);
                 }
         }
     }
@@ -106,8 +107,9 @@ public class SMB_Event : StateMachineBehaviour
         AnimatorClipInfo[] _clipInfos = animator.GetNextAnimatorClipInfo(layerIndex);
         if(_clipInfos.Length == 0)
             _clipInfos = animator.GetCurrentAnimatorClipInfo(layerIndex);
+        
         AnimationClip _clip = _clipInfos[0].clip;
-        return Mathf.RoundToInt(_clip.length / _clip.frameRate);
+        return Mathf.RoundToInt(_clip.length * _clip.frameRate);
     }
 
     private float GetNormalizedTime(AnimatorStateInfo stateInfo)

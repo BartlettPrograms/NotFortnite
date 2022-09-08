@@ -203,7 +203,10 @@ namespace PhysicsBasedCharacterController
 
         [SerializeField] Animator animator;
         [SerializeField] private CompCameraController compCamera;
-
+        
+        [SerializeField] private bool _inAnimation;
+        private Vector3 _animatorVelocity;
+        private Quaternion _animatorDeltaRotation;
         private float _targetSpeed;
         
         // Strafing
@@ -216,24 +219,30 @@ namespace PhysicsBasedCharacterController
         // Crouching
         private const string _standToCrouch = "Base Layer.Base Crouching";
         private const string _crouchToStand = "Base Layer.Base Standing";
-
+        
+        
+        // Getters
+        public bool AnimationLock { get => _inAnimation; }
+        public bool SetAnimationLock { set => _inAnimation = value; }
         /*  */
 
 
         private void Awake()
         {
-            animator.applyRootMotion = false;
-            
+
             rigidbody = this.GetComponent<Rigidbody>();
             collider = this.GetComponent<CapsuleCollider>();
             originalColliderHeight = collider.height;
-
+            
+            
+            //Nappin code below
             SetFriction(frictionAgainstFloor, true);
             currentLockOnSlope = lockOnSlope;
         }
 
         private void Start()
         {
+            animator.applyRootMotion = true;
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -267,12 +276,18 @@ namespace PhysicsBasedCharacterController
             CheckWall();
             CheckSlopeAndDirections();
 
-            //movement
+            // RootMotion
+
+            // Movement
             MoveSpeed();
-            MoveCrouch();
             MoveWalk();
-            MoveRotation();
-            MoveJump();
+            if (!_inAnimation)
+            {
+                MoveCrouch();
+                MoveRotation();
+                MoveJump();
+            }
+            
             MoveAnims();
 
             //gravity
@@ -282,6 +297,16 @@ namespace PhysicsBasedCharacterController
             UpdateEvents();
         }
 
+        private void OnAnimatorMove()
+        {
+            if (_inAnimation)
+            {
+                _animatorVelocity = animator.velocity;
+                _animatorDeltaRotation = animator.deltaRotation;
+                //Debug.Log(_animatorVelocity);
+                Debug.Log(_animatorDeltaRotation);
+            }
+        }
 
         #region Checks
 
@@ -536,36 +561,50 @@ namespace PhysicsBasedCharacterController
         }
         private void MoveWalk()
         {
-            if (axisInput.magnitude > movementThreshold)
+            // if in animation
+            if (_inAnimation)
             {
-                if (_strafing && compCamera.Target == null)
-                {
-                    // Aiming strafing movement (Movement is relative to Camera Forward)
-                    Vector3 strafeMoveVector = new Vector3(axisInput.x, 0, axisInput.y);
-                    strafeMoveVector = strafeMoveVector.x * characterCamera.transform.right +
-                                       strafeMoveVector.z * characterCamera.transform.forward;
-                    strafeMoveVector.y = 0;
-                    rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, strafeMoveVector * _targetSpeed, ref currVelocity, dampSpeedUp);
-                } else if (_strafing)
-                {
-                    // Locked on strafing movement (Movement is relative to Character forward)
-                    Vector3 strafeMoveVector = new Vector3(axisInput.x, 0, axisInput.y);
-                    strafeMoveVector = strafeMoveVector.x * transform.right +
-                                       strafeMoveVector.z * transform.forward;
-                    strafeMoveVector.y = 0;
-                    rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, strafeMoveVector * _targetSpeed, ref currVelocity, dampSpeedUp);
-                }
-                else // Free turning movement - no strafing (character only needs to move towards forward direction)
-                {
-                    targetAngle = Mathf.Atan2(axisInput.x, axisInput.y) * Mathf.Rad2Deg + characterCamera.transform.eulerAngles.y;
-                    rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, forward * _targetSpeed, ref currVelocity, dampSpeedUp);
-                }
-            }
-            // Back to idle
-            else
+                rigidbody.velocity = _animatorVelocity;
+            } 
+            else // No animation lock, free movement allowed
             {
-                rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, Vector3.zero, ref currVelocity, dampSpeedDown);
-                animator.SetFloat("Forward", rigidbody.velocity.magnitude);
+                if (axisInput.magnitude > movementThreshold) // If input detected
+                {   
+                    if (_strafing && compCamera.Target == null)
+                    {
+                        // Aiming strafing movement (Movement is relative to Camera Forward)
+                        Vector3 strafeMoveVector = new Vector3(axisInput.x, 0, axisInput.y);
+                        strafeMoveVector = strafeMoveVector.x * characterCamera.transform.right +
+                                           strafeMoveVector.z * characterCamera.transform.forward;
+                        strafeMoveVector.y = 0;
+                        rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, strafeMoveVector * _targetSpeed,
+                            ref currVelocity, dampSpeedUp);
+                    }
+                    else if (_strafing)
+                    {
+                        // Locked on strafing movement (Movement is relative to Character forward)
+                        Vector3 strafeMoveVector = new Vector3(axisInput.x, 0, axisInput.y);
+                        strafeMoveVector = strafeMoveVector.x * transform.right +
+                                           strafeMoveVector.z * transform.forward;
+                        strafeMoveVector.y = 0;
+                        rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, strafeMoveVector * _targetSpeed,
+                            ref currVelocity, dampSpeedUp);
+                    }
+                    else // Free turning movement - no strafing (character only needs to move towards forward direction)
+                    {
+                        targetAngle = Mathf.Atan2(axisInput.x, axisInput.y) * Mathf.Rad2Deg +
+                                      characterCamera.transform.eulerAngles.y;
+                        rigidbody.velocity = Vector3.SmoothDamp(rigidbody.velocity, forward * _targetSpeed,
+                            ref currVelocity, dampSpeedUp);
+                    }
+                }
+                // Back to idle
+                else
+                {
+                    rigidbody.velocity =
+                        Vector3.SmoothDamp(rigidbody.velocity, Vector3.zero, ref currVelocity, dampSpeedDown);
+                    animator.SetFloat("Forward", rigidbody.velocity.magnitude);
+                }
             }
         }
 
@@ -592,31 +631,40 @@ namespace PhysicsBasedCharacterController
 
         private void MoveRotation()
         {
-            if (_strafing)
+            if (_inAnimation)
             {
-                animator.SetFloat("Strafing", 1);
-                
-                if (compCamera.Target != null) //Strafing with target
-                {
-                    // Get Target Direction
-                    Vector3 _toTarget = compCamera.Target.TargetTransform.position - characterModel.transform.position;
-                    Debug.DrawRay(transform.position, _toTarget);
-                    // Get target angle from character
-                    Quaternion lookRot = Quaternion.LookRotation(_toTarget);
-                    // Set y angle to direction of target
-                    targetAngle = lookRot.eulerAngles.y;
-                }
-                else // no target, rotate to camera aim
-                {   
-                    targetAngle = characterCamera.transform.eulerAngles.y;
-                }
+                characterModel.transform.rotation *= _animatorDeltaRotation;
             }
-            animator.SetFloat("Strafing", 0);
-            float angle = Mathf.SmoothDampAngle(characterModel.transform.eulerAngles.y, targetAngle, ref turnSmoothVelocity, characterModelRotationSmooth);
-            transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+            else
+            {
+                if (_strafing)
+                {
+                    animator.SetFloat("Strafing", 1);
 
-            characterModel.transform.rotation = Quaternion.Euler(0f, angle, 0f);
-            
+                    if (compCamera.Target != null) //Strafing with target
+                    {
+                        // Get Target Direction
+                        Vector3 _toTarget = compCamera.Target.TargetTransform.position -
+                                            characterModel.transform.position;
+                        Debug.DrawRay(transform.position, _toTarget);
+                        // Get target angle from character
+                        Quaternion lookRot = Quaternion.LookRotation(_toTarget);
+                        // Set y angle to direction of target
+                        targetAngle = lookRot.eulerAngles.y;
+                    }
+                    else // no target, rotate to camera aim
+                    {
+                        targetAngle = characterCamera.transform.eulerAngles.y;
+                    }
+                }
+
+                animator.SetFloat("Strafing", 0);
+                float angle = Mathf.SmoothDampAngle(characterModel.transform.eulerAngles.y, targetAngle,
+                    ref turnSmoothVelocity, characterModelRotationSmooth);
+                transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+
+                characterModel.transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            }
         }
         
 

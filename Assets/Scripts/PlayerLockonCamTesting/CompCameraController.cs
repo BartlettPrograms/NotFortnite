@@ -269,7 +269,7 @@ public class CompCameraController : MonoBehaviour
         Collider[] _colliders = Physics.OverlapSphere(transform.position, _lockOnDistance, _lockOnLayers);
         foreach (Collider _collider in _colliders)
         {
-            Debug.Log(_collider);
+            //Debug.Log(_collider);
             ITargetable _targetable = _collider.GetComponent<ITargetable>();
             if (_targetable != null)
                 if (_targetable.Targetable)

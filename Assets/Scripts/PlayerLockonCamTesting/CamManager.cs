@@ -47,7 +47,7 @@ public class CamManager : MonoBehaviour
         {
             if (_lockedOn)
             {
-                compCamera.RemoveTarget();;
+                compCamera.RemoveTarget();
             }
             _lockedOn = !_lockedOn;
             toggleReleased = false;

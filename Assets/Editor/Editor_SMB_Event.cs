@@ -22,7 +22,7 @@ namespace PlayerScripts.Events
         {
             m_totalFrames = serializedObject.FindProperty("m_totalFrames");
             m_currentFrame = serializedObject.FindProperty("m_currentFrame");
-            m_normalizedTime = serializedObject.FindProperty("m_normalized Time");
+            m_normalizedTime = serializedObject.FindProperty("m_normalizedTime");
             m_normalizedTimeUncapped = serializedObject.FindProperty("m_normalizedTimeUncapped");
             m_motionTime = serializedObject.FindProperty("m_motionTime");
             m_events = serializedObject.FindProperty("Events");
