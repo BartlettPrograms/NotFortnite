@@ -95,15 +95,15 @@ public class CompCameraController : MonoBehaviour
         _targetRotation = Quaternion.LookRotation(_planarDirection) * Quaternion.Euler(_targetVerticalAngle, 0, 0);
         _targetPosition = _followTransform.position - (_targetRotation * Vector3.forward) * _targetDistance; 
         
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
         checkLockOn();
         
-        if (Cursor.lockState != CursorLockMode.Locked)
-            return;
+        //if (Cursor.lockState != CursorLockMode.Locked)
+            //return;
         // Handle input
         float _zoom = input.mouseScroll.y * _zoomSpeed;
         mouseInput = input.cameraInput;

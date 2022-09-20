@@ -243,7 +243,7 @@ namespace PhysicsBasedCharacterController
         private void Start()
         {
             animator.applyRootMotion = true;
-            Cursor.lockState = CursorLockMode.Locked;
+            //Cursor.lockState = CursorLockMode.Locked;
         }
 
 
@@ -304,7 +304,7 @@ namespace PhysicsBasedCharacterController
                 _animatorVelocity = animator.velocity;
                 _animatorDeltaRotation = animator.deltaRotation;
                 //Debug.Log(_animatorVelocity);
-                Debug.Log(_animatorDeltaRotation);
+                //Debug.Log(_animatorDeltaRotation);
             }
         }
 
