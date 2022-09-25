@@ -25,7 +25,7 @@ namespace MoreMountains.InventoryEngine
 		public override bool Equip(string playerID)
 		{
 			base.Equip(playerID);
-			Debug.Log(TargetInventory(playerID) + "Weapon Equiping"); //.GetComponent<Comp_Equipment>());
+			//Debug.Log(TargetInventory(playerID) + "Weapon Equiping"); //.GetComponent<Comp_Equipment>());
 			//					(replace IDC script with Combat Manager)										(Replace the sprite with a weapon prefab)
 			//Below line accesses IDC script. It runs the function SetWeapon. It passes the inventory item and the sprite to display.
 			//										Weapon prefab is in place. Everything is good to go, I just cant resolve my Equipment script from here
@@ -39,7 +39,7 @@ namespace MoreMountains.InventoryEngine
 		public override bool UnEquip(string playerID)
 		{
 			base.UnEquip(playerID);
-			TargetInventory(playerID).TargetTransform.GetComponent<InventoryDemoCharacter>().SetWeapon(null,this);
+			//TargetInventory(playerID).TargetTransform.GetComponent<InventoryDemoCharacter>().SetWeapon(null,this);
 			return true;
 		}
 		

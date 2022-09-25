@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace MoreMountains.InventoryEngine
 {
@@ -29,7 +30,42 @@ namespace MoreMountains.InventoryEngine
 			/// whether or not this action should be triggered
 			public bool Active = true;
 		}
+		
+		[SerializeField] private PlayerInput input;
         
+		public void Weapon1(InputAction.CallbackContext context)
+		{
+			if (context.performed)
+			{
+				ExecuteAction(0);
+			}
+		}
+		
+		public void Weapon2(InputAction.CallbackContext context)
+		{
+			ExecuteAction(1);
+		}
+		
+		public void Weapon3(InputAction.CallbackContext context)
+		{
+			ExecuteAction(2);
+		}
+		
+		public void Weapon4(InputAction.CallbackContext context)
+		{
+			ExecuteAction(3);
+		}
+		
+		public void Weapon5(InputAction.CallbackContext context)
+		{
+			ExecuteAction(4);
+		}
+		
+		public void Weapon6(InputAction.CallbackContext context)
+		{
+			ExecuteAction(5);
+		}
+		
 		/// <summary>
 		/// The possible actions that can be caused when activating input
 		/// </summary>
@@ -76,6 +112,7 @@ namespace MoreMountains.InventoryEngine
 		/// </summary>
 		protected virtual void Start()
 		{
+			input = GetComponent<PlayerInput>();
 			Initialization();
 		}
 
@@ -123,10 +160,10 @@ namespace MoreMountains.InventoryEngine
 				{
 					continue;
 				}
-				if (Input.GetKeyDown(binding.InputBinding) || Input.GetKeyDown(binding.AltInputBinding))
-				{
-					ExecuteAction(binding);
-				}
+				// if (Input.GetKeyDown(binding.InputBinding) || Input.GetKeyDown(binding.AltInputBinding))
+				// {
+				// 	ExecuteAction(binding);
+				// }
 			}
 		}
 
@@ -135,22 +172,22 @@ namespace MoreMountains.InventoryEngine
 		/// </summary>
 		/// <param name="binding"></param>
 		/// <exception cref="ArgumentOutOfRangeException"></exception>
-		protected virtual void ExecuteAction(InventoryInputActionsBindings binding)
+		protected virtual void ExecuteAction(int binding)
 		{
-			if (binding.SlotIndex > _targetInventory.Content.Length)
+			/*if (binding.SlotIndex > _targetInventory.Content.Length)
 			{
 				return;
 			}
 			if (_targetInventory.Content[binding.SlotIndex] == null)
 			{
 				return;
-			}
+			}*/
 
-			switch (binding.Action)
-			{
-				case Actions.Equip:
-					MMInventoryEvent.Trigger(MMInventoryEventType.EquipRequest, null, _targetInventory.name, _targetInventory.Content[binding.SlotIndex], 0, binding.SlotIndex, _targetInventory.PlayerID);
-					break;
+			//switch (binding.Action)
+			//{
+				//case Actions.Equip:
+					MMInventoryEvent.Trigger(MMInventoryEventType.EquipRequest, null, _targetInventory.name, _targetInventory.Content[binding], 0, binding, _targetInventory.PlayerID);
+					/*break;
 				case Actions.Use:
 					MMInventoryEvent.Trigger(MMInventoryEventType.UseRequest, null, _targetInventory.name, _targetInventory.Content[binding.SlotIndex], 0, binding.SlotIndex, _targetInventory.PlayerID);
 					break;
@@ -162,7 +199,7 @@ namespace MoreMountains.InventoryEngine
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
-			}
+			}*/
 		}
 	}
 }

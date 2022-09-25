@@ -109,7 +109,6 @@ GameObject:
   - component: {fileID: 5452550573202940328}
   - component: {fileID: 5452550573203743112}
   - component: {fileID: 5452550573204710216}
-  - component: {fileID: 4837038768871590111}
   - component: {fileID: 5452550573202940343}
   - component: {fileID: 5452550573202940342}
   - component: {fileID: 5452550573202940329}
@@ -130,7 +129,7 @@ Transform:
   m_GameObject: {fileID: 5452550573202783624}
   m_LocalRotation: {x: 0.034322906, y: -0.7325005, z: -0.6797751, w: 0.013070763}
   m_LocalPosition: {x: 127.152, y: 7.742, z: 102.256}
-  m_LocalScale: {x: 1.5000011, y: 1.5000008, z: 1.500001}
+  m_LocalScale: {x: 1.7, y: 1.7, z: 1.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7323188919375929298}
@@ -189,20 +188,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4837038768871590111
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5452550573202783624}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: d5f3c5f59ba3cf743b1492682559cc66, type: 3}
 --- !u!54 &5452550573202940343
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -228,7 +213,7 @@ BoxCollider:
   m_GameObject: {fileID: 5452550573202783624}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.7163533, y: 0.24093112, z: 0.056624357}
   m_Center: {x: -0.06105347, y: 0.036080882, z: 0.000000015347851}
@@ -241,7 +226,7 @@ BoxCollider:
   m_GameObject: {fileID: 5452550573202783624}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 0.7163533, y: 0.24093112, z: 0.056624357}
   m_Center: {x: -0.06105347, y: 0.036080882, z: 0.000000015347851}
@@ -257,7 +242,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86fd837a0abc28d4d91c55590bd2c090, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Item: {fileID: 11400000, guid: 23f15b9bad261b545acbe8659a1d279a, type: 2}
+  Item: {fileID: 11400000, guid: 642872ad9a7a2dbfeb7d459f283510e5, type: 2}
   Quantity: 1
   RemainingQuantity: 1
   PickableIfInventoryIsFull: 0

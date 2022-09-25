@@ -123,8 +123,8 @@ namespace PhysicsBasedCharacterController
         public float characterModelRotationSmooth = 0.1f;
         [Space(10)]
 
-        [Tooltip("Default character mesh")]
-        public GameObject meshCharacter;
+        //[Tooltip("Default character mesh")]
+        //public GameObject meshCharacter;
         [Tooltip("Crouch character mesh")]
         public GameObject meshCharacterCrouch;
         [Tooltip("Head reference")]
@@ -303,8 +303,6 @@ namespace PhysicsBasedCharacterController
             {
                 _animatorVelocity = animator.velocity;
                 _animatorDeltaRotation = animator.deltaRotation;
-                //Debug.Log(_animatorVelocity);
-                //Debug.Log(_animatorDeltaRotation);
             }
         }
 
@@ -622,9 +620,21 @@ namespace PhysicsBasedCharacterController
                 _strafeParameterXZ = Vector3.Lerp(_strafeParameterXZ, Vector3.up * _targetSpeed, 
                     _animMoveSharpness * Time.deltaTime); // Vector3.up should be .forward, but I scuffed the code so its up to give correct result.
             }
+            //Debug.Log("x: " + axisInput.x + "  -  y:" + axisInput.y);
             animator.SetFloat("Strafing", _strafeParameter);
-            animator.SetFloat("StrafingX", Mathf.Round(_strafeParameterXZ.x * 100f) / 100f);
-            animator.SetFloat("StrafingZ", Mathf.Round(_strafeParameterXZ.y * 100f) / 100f);
+            
+            // If we are strafing, then we care about the axis of input
+            if (_strafeParameter > 0.1)
+            {
+                animator.SetFloat("StrafingX", Mathf.Round(_strafeParameterXZ.x * 100f) / 100f);
+                animator.SetFloat("StrafingZ", Mathf.Round(_strafeParameterXZ.y * 100f) / 100f);
+            }
+            else // If we are not strafing, Then we only want to send our momentum on the Forwards - Positive Z axis of our animator
+            {
+                // We want to send our strafe parameter to StrafingZ as an always positive 
+                animator.SetFloat("StrafingZ", Mathf.Round(Mathf.Max(_strafeParameterXZ.y, _strafeParameterXZ.x) * 100f) / 100f);
+            }
+
             animator.SetFloat("Forward", rigidbody.velocity.magnitude);
         }
 

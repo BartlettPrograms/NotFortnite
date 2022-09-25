@@ -207,7 +207,6 @@ GameObject:
   - component: {fileID: 2595219361367479476}
   - component: {fileID: 2595219361370346644}
   - component: {fileID: 2595219361369380436}
-  - component: {fileID: 3211021146048249283}
   m_Layer: 0
   m_Name: SMG1
   m_TagString: Untagged
@@ -283,20 +282,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &3211021146048249283
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2595219361367181460}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: d5f3c5f59ba3cf743b1492682559cc66, type: 3}
 --- !u!1 &5403097460880969566
 GameObject:
   m_ObjectHideFlags: 0
