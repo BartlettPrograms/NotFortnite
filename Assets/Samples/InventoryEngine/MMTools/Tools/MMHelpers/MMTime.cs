@@ -67,25 +67,25 @@ namespace MoreMountains.Tools
 				throw new Exception("The time in the TimeStringToFloat method must be specified using a hh:mm:ss:SSS syntax");
 			}
 
-			string[] timeStringArray = timeInStringNotation.Split(new string[] {":","."},StringSplitOptions.None);
+			string[] timeStringArray = timeInStringNotation.Split(new string[] {":"},StringSplitOptions.None);
 
 			float startTime=0f;
 			float result;
 			if (float.TryParse(timeStringArray[0], out result))
 			{
-				startTime += result*3600f;
+				startTime+=result*3600f;
 			}
 			if (float.TryParse(timeStringArray[1], out result))
 			{
-				startTime += result*60f;
+				startTime+=result*60f;
 			}
 			if (float.TryParse(timeStringArray[2], out result))
 			{
-				startTime += result;
+				startTime+=result;
 			}
 			if (float.TryParse(timeStringArray[3], out result))
 			{
-				startTime += result/1000f;
+				startTime+=result/1000f;
 			}
 
 			return startTime;

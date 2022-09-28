@@ -68,7 +68,7 @@ namespace PlayerCombatController
                 {
                     characterManager.SetAnimationLock = true;
                     _animator.CrossFadeInFixedTime(animations[Equipment.WeaponTypeInt], 0.1f, 0, 0);
-                    Debug.Log(Equipment.WeaponTypeInt);
+                    //Debug.Log(Equipment.WeaponTypeInt);
                 }
             }
             if (_jabbing)

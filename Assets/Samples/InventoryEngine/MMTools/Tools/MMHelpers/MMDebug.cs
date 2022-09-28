@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Reflection;
 using System.Linq;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -191,7 +194,7 @@ namespace MoreMountains.Tools
 					}
 					log.Append("<color=#f9a682>[" + MMTime.FloatToTimeString(LogHistory[i].Time, false, true, true, true) + "]</color> ");
 					log.Append(colorPrefix + LogHistory[i].Message + colorSuffix);
-					log.Append(System.Environment.NewLine);
+					log.Append(Environment.NewLine);
 				}
 				return log.ToString();
 			}
@@ -278,12 +281,19 @@ namespace MoreMountains.Tools
 		/// </summary>
 		public struct MMDebugLogEvent
 		{
-			static private event Delegate OnEvent;
-			[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] private static void RuntimeInitialization() { OnEvent = null; }
-			static public void Register(Delegate callback) { OnEvent += callback; }
-			static public void Unregister(Delegate callback) { OnEvent -= callback; }
-
 			public delegate void Delegate(DebugLogItem item);
+			static private event Delegate OnEvent;
+
+			static public void Register(Delegate callback)
+			{
+				OnEvent += callback;
+			}
+
+			static public void Unregister(Delegate callback)
+			{
+				OnEvent -= callback;
+			}
+
 			static public void Trigger(DebugLogItem item)
 			{
 				OnEvent?.Invoke(item);

@@ -1,7 +1,10 @@
-﻿using Unity.VisualScripting;
+﻿using MoreMountains.Tools;
+using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 
 namespace PhysicsBasedCharacterController
@@ -49,7 +52,10 @@ namespace PhysicsBasedCharacterController
         private bool isMouseAndKeyboard = true;
         private bool oldInput = true;
 
-
+        public delegate void StartTouchEvent(Vector2 position, float time);
+        public event StartTouchEvent OnStartTouch;
+        public delegate void EndTouchEvent(Vector2 position, float time);
+        public event EndTouchEvent OnEndTouch;
         /**/
 
 
@@ -83,6 +89,9 @@ namespace PhysicsBasedCharacterController
             
             movementActions.Gameplay.Scroll.performed += ctx => TargetLock(ctx);
             movementActions.Gameplay.TargetLock.canceled += ctx => TargetLockReleased(ctx);
+            
+            movementActions.Touch.TouchPress.started += ctx => StartTouch(ctx);
+            movementActions.Touch.TouchPress.canceled += ctx => EndTouch(ctx);
         }
 
 
@@ -137,6 +146,8 @@ namespace PhysicsBasedCharacterController
 
             */
         }
+        
+        
 
 
         #region Actions
@@ -173,6 +184,20 @@ namespace PhysicsBasedCharacterController
         public void TargetLockReleased(InputAction.CallbackContext ctx)
         {
             targetLock = false;
+        }
+
+        public void StartTouch(InputAction.CallbackContext ctx)
+        {
+            Debug.Log("Touch started " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
+            if (OnStartTouch != null)
+                OnStartTouch(movementActions.Touch.TouchPosition.ReadValue<Vector2>(), (float)ctx.startTime);
+        }
+
+        public void EndTouch(InputAction.CallbackContext ctx)
+        {
+            Debug.Log("Touch ended " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
+            if (OnEndTouch != null)
+                OnEndTouch(movementActions.Touch.TouchPosition.ReadValue<Vector2>(), (float)ctx.time);
         }
         
         /*

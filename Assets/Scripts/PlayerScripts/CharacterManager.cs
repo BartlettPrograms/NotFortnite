@@ -1,4 +1,5 @@
 ﻿using System;
+using MoreMountains.Tools;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
@@ -220,6 +221,10 @@ namespace PhysicsBasedCharacterController
         private const string _standToCrouch = "Base Layer.Base Crouching";
         private const string _crouchToStand = "Base Layer.Base Standing";
         
+        // Touch Control GameObjects
+        [SerializeField] private MMTouchRepositionableJoystick moveStickAxis;
+        [SerializeField] private MMTouchButton aButton;
+        
         
         // Getters
         public bool AnimationLock { get => _inAnimation; }
@@ -229,7 +234,6 @@ namespace PhysicsBasedCharacterController
 
         private void Awake()
         {
-
             rigidbody = this.GetComponent<Rigidbody>();
             collider = this.GetComponent<CapsuleCollider>();
             originalColliderHeight = collider.height;
@@ -250,7 +254,8 @@ namespace PhysicsBasedCharacterController
         private void Update()
         {
             //input
-            axisInput = input.axisInput;
+            //axisInput = input.axisInput; // Keyboard movement input
+            axisInput = moveStickAxis.NormalizedValue;
             jump = input.jump;
             jumpHold = input.jumpHold;
             sprint = input.sprint;
@@ -278,6 +283,7 @@ namespace PhysicsBasedCharacterController
 
             // RootMotion
 
+            
             // Movement
             MoveSpeed();
             MoveWalk();

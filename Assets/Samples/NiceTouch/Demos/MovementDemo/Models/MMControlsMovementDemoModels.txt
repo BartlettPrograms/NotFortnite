@@ -1,0 +1,6 @@
+All the models in this folder were created by Kay Lousberg (https://kaylousberg.itch.io/) under a CC0 license, and distributed in this demo with their approval.
+
+The assets used in this demo can be found in the following packs :
+- https://kaylousberg.itch.io/kaykit-dungeon
+- https://kaylousberg.itch.io/kaykit-medieval-builder-pack
+- https://kaylousberg.itch.io/kaykit-animations
