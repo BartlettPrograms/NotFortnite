@@ -94,6 +94,7 @@ namespace MoreMountains.Tools
 			Initialization ();
 		}
 
+		
 		protected virtual void Initialization()
 		{
 			ReturnToInitialSpriteAutomatically = true;

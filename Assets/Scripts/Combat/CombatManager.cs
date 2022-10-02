@@ -60,7 +60,7 @@ namespace PlayerCombatController
             MoveAttack();
         }
 
-        private void MoveAttack()
+        public void MoveAttack()
         {
             if (!characterManager.AnimationLock)
             {
@@ -76,6 +76,16 @@ namespace PlayerCombatController
                 _hitboxLeftFist.CheckHit();
             }
         }
+
+        public void SetAttackTrue()
+        {
+            attack = true;
+        }
+        public void SetAttackFalse()
+        {
+            attack = false;
+        }
+        
         private void OnSMBEvent(string eventName)
         {
             switch (eventName)
@@ -96,6 +106,7 @@ namespace PlayerCombatController
         }
 
         public int Damage { get; }
+        
         public bool CheckHit(HitData data)
         {
             if (data.hurtbox.Owner == gameObject)   { return false; }

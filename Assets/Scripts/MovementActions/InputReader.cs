@@ -1,10 +1,12 @@
 ﻿using MoreMountains.Tools;
 using Unity.VisualScripting;
-using UnityEditor.Rendering.LookDev;
+//using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.InputSystem.Controls;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 
 namespace PhysicsBasedCharacterController
@@ -62,18 +64,23 @@ namespace PhysicsBasedCharacterController
         private void Awake()
         {
             movementActions = new MovementActions();
+            EnhancedTouchSupport.Enable();
 
             movementActions.Gameplay.Movement.performed += ctx => OnMove(ctx);
         
-            movementActions.Gameplay.Camera.performed += ctx => OnCamera(ctx);
+            // PC Camera aim code
+            //movementActions.Gameplay.Camera.performed += ctx => OnCamera(ctx);
+            // Mobile Camera aim code
+            movementActions.Touch.TouchPosition.performed += ctx => OnCamera(ctx);
             
             movementActions.Gameplay.Scroll.performed += ctx => OnScroll(ctx);
 
             movementActions.Gameplay.Jump.performed += ctx => OnJump();
             movementActions.Gameplay.Jump.canceled += ctx => JumpEnded();
 
-            movementActions.Gameplay.Sprint.performed += ctx => OnSprint(ctx);
-            movementActions.Gameplay.Sprint.canceled += ctx => SprintEnded(ctx);
+            // Enable below lines to enable PC controls for sprinting
+            //movementActions.Gameplay.Sprint.performed += ctx => OnSprint(ctx);
+            //movementActions.Gameplay.Sprint.canceled += ctx => SprintEnded(ctx);
 
             movementActions.Gameplay.Crounch.performed += ctx => OnCrouch(ctx);
             movementActions.Gameplay.Crounch.canceled += ctx => CrouchEnded(ctx);
@@ -92,12 +99,26 @@ namespace PhysicsBasedCharacterController
             
             movementActions.Touch.TouchPress.started += ctx => StartTouch(ctx);
             movementActions.Touch.TouchPress.canceled += ctx => EndTouch(ctx);
+
+            UnityEngine.InputSystem.EnhancedTouch.Touch.onFingerDown += FingerDown;
         }
 
 
         //old input system
         private void Update()
         {
+            if (UnityEngine.InputSystem.EnhancedTouch.Touch.activeFingers.Count == 1)
+            {
+                UnityEngine.InputSystem.EnhancedTouch.Touch activeTouch = UnityEngine.InputSystem.EnhancedTouch.Touch.activeFingers[0].currentTouch;
+                //Debug.Log($"Phase: {activeTouch.phase} | Position: {activeTouch.delta}");
+            }
+            //Debug.Log(UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches);
+            // foreach (UnityEngine.InputSystem.EnhancedTouch.Touch touch in UnityEngine.InputSystem.EnhancedTouch.Touch
+            //              .activeTouches)
+            // {
+            //     Debug.Log(touch.phase == UnityEngine.InputSystem.TouchPhase.Began);
+            // }
+
             /*
             axisInput = new Vector3(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"), 0f).normalized;
             
@@ -156,6 +177,11 @@ namespace PhysicsBasedCharacterController
          * Added by Matt Bart 8/22
          */
 
+        public void FingerDown(Finger finger)
+        {
+            if (OnStartTouch != null) OnStartTouch(finger.screenPosition, Time.time);
+        }
+
         public void AimIn(InputAction.CallbackContext ctx)
         {
             if (ctx.performed) aimIn = true;
@@ -188,14 +214,14 @@ namespace PhysicsBasedCharacterController
 
         public void StartTouch(InputAction.CallbackContext ctx)
         {
-            Debug.Log("Touch started " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
+            //Debug.Log("Touch started " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
             if (OnStartTouch != null)
                 OnStartTouch(movementActions.Touch.TouchPosition.ReadValue<Vector2>(), (float)ctx.startTime);
         }
 
         public void EndTouch(InputAction.CallbackContext ctx)
         {
-            Debug.Log("Touch ended " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
+            //Debug.Log("Touch ended " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
             if (OnEndTouch != null)
                 OnEndTouch(movementActions.Touch.TouchPosition.ReadValue<Vector2>(), (float)ctx.time);
         }
@@ -247,6 +273,7 @@ namespace PhysicsBasedCharacterController
 
         public void OnCamera(InputAction.CallbackContext ctx)
         {
+            // I want this value to instead be influenced by Touchposition
             cameraInput = ctx.ReadValue<Vector2>();
             GetDeviceNew(ctx);
         }
@@ -257,9 +284,22 @@ namespace PhysicsBasedCharacterController
             mouseScroll = ctx.ReadValue<Vector2>();
             GetDeviceNew(ctx);
         }
+        
+        // Mobile Sprint controls
+        public void OnSprint()
+        {
+            sprint = true;
+        }
 
+        public void SprintEnded()
+        {
+            sprint = false;
+        }
 
+        // PC Sprint controls
+        /*
         public void OnSprint(InputAction.CallbackContext ctx)
+        
         {
             if (enableSprint) sprint = true;
         }
@@ -269,6 +309,7 @@ namespace PhysicsBasedCharacterController
         {
             if (enableSprint) sprint = false;
         }
+        */
 
 
         public void OnCrouch(InputAction.CallbackContext ctx)
@@ -290,12 +331,14 @@ namespace PhysicsBasedCharacterController
         private void OnEnable()
         {
             movementActions.Enable();
+            TouchSimulation.Enable();
         }
 
 
         private void OnDisable()
         {
             movementActions.Disable();
+            TouchSimulation.Disable();
         }
 
         #endregion

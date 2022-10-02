@@ -684,6 +684,42 @@
                     "processors": "",
                     "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Touch2Input",
+                    "type": "PassThrough",
+                    "id": "33b6fa5e-1fae-4594-ae5f-5cfb80955c7f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Touch2Press",
+                    "type": "Button",
+                    "id": "e6b1107a-56df-4913-89f5-72d757a63d63",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Touch2Position",
+                    "type": "PassThrough",
+                    "id": "d9e8309d-aa34-46db-b93f-89771610a9cf",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Touch3Position",
+                    "type": "PassThrough",
+                    "id": "29e3e759-1898-45c5-8a64-1a83e5eeed00",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "Press(behavior=2)",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -712,11 +748,55 @@
                 {
                     "name": "",
                     "id": "b92a4047-6bfe-4286-914b-cdb576eeca39",
-                    "path": "<Touchscreen>/position",
+                    "path": "<Touchscreen>/primaryTouch/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "TouchPosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4c25c767-e20a-435e-8d88-1865f7c089be",
+                    "path": "<Touchscreen>/touch1/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch2Position",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4142b5c1-95ee-4529-9718-4665bb3aab8e",
+                    "path": "<Touchscreen>/touch1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch2Input",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c28bdc4d-404a-4236-906d-bb1923d9b704",
+                    "path": "<Touchscreen>/touch1/press",
+                    "interactions": "Press(behavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch2Press",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9e477e86-7631-49b4-979c-5d37ab48fb27",
+                    "path": "<Touchscreen>/touch3/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Touch3Position",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

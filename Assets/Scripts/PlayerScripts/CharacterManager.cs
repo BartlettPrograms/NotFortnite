@@ -229,6 +229,7 @@ namespace PhysicsBasedCharacterController
         // Getters
         public bool AnimationLock { get => _inAnimation; }
         public bool SetAnimationLock { set => _inAnimation = value; }
+        
         /*  */
 
 
@@ -515,7 +516,6 @@ namespace PhysicsBasedCharacterController
         }
 
         #endregion
-        
 
         #region Move
 
@@ -797,6 +797,18 @@ namespace PhysicsBasedCharacterController
         public void SetTargetAngle(float _targetAngle) { targetAngle += _targetAngle; }
 
         #endregion
+
+        // public void SetJumpingTrue()
+        // {
+        //     jump = true;
+        //     jumpHold = true;
+        // }
+        //
+        // public void SetJumpingFalse()
+        // {
+        //     jump = false;
+        //     jumpHold = false;
+        // }
 
 
         #region Gizmos

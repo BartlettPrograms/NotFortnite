@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -92,6 +93,12 @@ namespace MoreMountains.Tools
 		protected float _lastPointerUpAt = 0f;
 		protected float _swipeStartedAt = 0f;
 		protected float _swipeEndedAt = 0f;
+		
+		/* Added by Matt Bartlett 01/11/22 */
+
+		public bool touchLookActive = false;
+
+		/* */
 
 		protected virtual void Swipe()
 		{
@@ -119,9 +126,11 @@ namespace MoreMountains.Tools
 		{
 			#if ENABLE_INPUT_SYSTEM
 			_firstTouchPosition = Mouse.current.position.ReadValue();
+			
 			#else
 			_firstTouchPosition = Input.mousePosition;
 			#endif
+			touchLookActive = true;
 			_swipeStartedAt = Time.unscaledTime;
 		}
 
@@ -140,6 +149,7 @@ namespace MoreMountains.Tools
 			#else
 			_destination = Input.mousePosition;
 			#endif
+			touchLookActive = false;
 			_deltaSwipe = _destination - _firstTouchPosition;
 			_length = _deltaSwipe.magnitude;
 
@@ -169,7 +179,9 @@ namespace MoreMountains.Tools
 			if (!MouseMode)
 			{
 				OnPointerDown (data);
+				//Debug.Log("X: " + data.position.x + "  --  " + data.position.y);
 			}
+			touchLookActive = true;
 		}
 
 		/// <summary>
@@ -181,6 +193,7 @@ namespace MoreMountains.Tools
 			{
 				OnPointerUp(data);	
 			}
+			touchLookActive = false;
 		}
 
 		/// <summary>
