@@ -138,12 +138,12 @@ namespace MoreMountains.InventoryEngine
         	{
                 if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryOpens)
                 {
-	                Cursor.lockState = CursorLockMode.None;
+	                //Cursor.lockState = CursorLockMode.None;
 	                cmInput.enabled = false;
                 }
                 if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryCloses)
                 {
-	                Cursor.lockState = CursorLockMode.Locked;
+	                //Cursor.lockState = CursorLockMode.Locked;
 	                cmInput.enabled = true;
                 }
                 

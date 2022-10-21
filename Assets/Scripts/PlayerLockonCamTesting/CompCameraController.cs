@@ -106,7 +106,7 @@ public class CompCameraController : MonoBehaviour
             //return;
         // Handle input
         float _zoom = input.mouseScroll.y * _zoomSpeed;
-        mouseInput = input.cameraInput;
+        mouseInput = input.Touch1Delta; // This is the problem if there is any issues with touchscreen and target lock
         if (_invertX) mouseInput.x *= -1f;
         if (_invertY)mouseInput.y *= -1f;
         _zoom *= -1f;

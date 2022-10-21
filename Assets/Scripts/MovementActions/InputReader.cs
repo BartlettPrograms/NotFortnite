@@ -28,7 +28,15 @@ namespace PhysicsBasedCharacterController
         [HideInInspector]
         public Vector2 axisInput;
         [HideInInspector]
-        public Vector2 cameraInput;
+        public Vector2 Touch1Delta;
+        [HideInInspector] 
+        public Vector2 Touch2Delta;
+        [HideInInspector]
+        public Vector2 Touch1Position;
+        [HideInInspector] 
+        public Vector2 Touch2Position;
+        [HideInInspector] 
+        public Vector2 Touch3Position;
         [HideInInspector]
         public Vector2 mouseScroll;
         [HideInInspector]
@@ -70,8 +78,14 @@ namespace PhysicsBasedCharacterController
         
             // PC Camera aim code
             //movementActions.Gameplay.Camera.performed += ctx => OnCamera(ctx);
-            // Mobile Camera aim code
-            movementActions.Touch.TouchPosition.performed += ctx => OnCamera(ctx);
+            /*
+             * Mobile Camera aim code
+             * I should interpolate the first two thumbs
+             */
+            
+            //movementActions.Touch.TouchPress.performed += ctx => OnTouch1Pos(ctx);
+            //movementActions.Touch.Touch2Press.performed += ctx => OnTouch2Pos(ctx);
+            //movementActions.Touch.Touch3Press.performed += ctx => OnTouch3Pos(ctx);
             
             movementActions.Gameplay.Scroll.performed += ctx => OnScroll(ctx);
 
@@ -216,14 +230,14 @@ namespace PhysicsBasedCharacterController
         {
             //Debug.Log("Touch started " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
             if (OnStartTouch != null)
-                OnStartTouch(movementActions.Touch.TouchPosition.ReadValue<Vector2>(), (float)ctx.startTime);
+                OnStartTouch(movementActions.Touch.TouchDelta.ReadValue<Vector2>(), (float)ctx.startTime);
         }
 
         public void EndTouch(InputAction.CallbackContext ctx)
         {
             //Debug.Log("Touch ended " + movementActions.Touch.TouchPosition.ReadValue<Vector2>());
             if (OnEndTouch != null)
-                OnEndTouch(movementActions.Touch.TouchPosition.ReadValue<Vector2>(), (float)ctx.time);
+                OnEndTouch(movementActions.Touch.TouchDelta.ReadValue<Vector2>(), (float)ctx.time);
         }
         
         /*
@@ -235,8 +249,7 @@ namespace PhysicsBasedCharacterController
             axisInput = ctx.ReadValue<Vector2>();
             GetDeviceNew(ctx);
         }
-
-
+        
         public void OnJump()
         {
             if(enableJump)
@@ -248,8 +261,7 @@ namespace PhysicsBasedCharacterController
                 skippedFrame = false;
             }
         }
-
-
+        
         public void JumpEnded()
         {
             if(enableJump)
@@ -258,8 +270,7 @@ namespace PhysicsBasedCharacterController
                 jumpHold = false;
             }
         }
-
-
+        
         private void FixedUpdate()
         {
             if (hasJumped && skippedFrame)
@@ -270,15 +281,6 @@ namespace PhysicsBasedCharacterController
             if (!skippedFrame) skippedFrame = true;
         }
 
-
-        public void OnCamera(InputAction.CallbackContext ctx)
-        {
-            // I want this value to instead be influenced by Touchposition
-            cameraInput = ctx.ReadValue<Vector2>();
-            GetDeviceNew(ctx);
-        }
-        
-        
         public void OnScroll(InputAction.CallbackContext ctx)
         {
             mouseScroll = ctx.ReadValue<Vector2>();

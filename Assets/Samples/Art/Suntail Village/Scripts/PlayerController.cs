@@ -84,8 +84,6 @@ namespace Suntail
         {
             _characterController = GetComponent<CharacterController>();
             GetTerrainData();
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
 
         //Getting all terrain data for footstep system

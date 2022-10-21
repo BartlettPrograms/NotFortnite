@@ -5,7 +5,7 @@ using MoreMountains.Tools;
 using PhysicsBasedCharacterController;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.UI;
 
 public class AimZone : MonoBehaviour
 {
@@ -13,75 +13,65 @@ public class AimZone : MonoBehaviour
     [SerializeField] private InputReader input;
     [SerializeField] private CinemachineInputProvider cinemachineInput;
 
-    [Header("TouchDeltaInputs")] 
-    [SerializeField] private InputActionReference[] fingerID;
-    
+    [Header("TouchInputs")] 
+    [SerializeField] private InputActionReference[] fingerDeltas;
+    [SerializeField] private InputActionReference[] fingerPositions;
+
+    [SerializeField] private Image[] Buttons;
+
 
     private bool aimZoneActive = false;
-    private Rect aimZoneSize;
+    private Rect aimZoneRect;
 
     private int aimFingerIndex;
 
 
     private void Start()
     {
-        aimZoneSize = gameObject.GetComponent<RectTransform>().rect;
-        //Debug.Log($"X: {aimZoneSize.width}  -|-  Y: {aimZoneSize.height}  -|-  Pos: {aimZoneSize.position}");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // If touching swipe zone turn aim controller on (this is on the cm vcam controller)
-        if (aimZoneActive)
+        foreach (InputActionReference fingerPosition in fingerPositions)
         {
-            //Debug.Log(input.cameraInput);
-            cinemachineInput.enabled = true;
+            // probably take this out later
+            fingerPosition.action.Enable();
         }
-        // Not touching aim zone = aim controls disabled
-        else cinemachineInput.enabled = false;
+        aimZoneRect = gameObject.GetComponent<RectTransform>().rect;
+        //Debug.Log($"X: {aimZoneRect.width}  -|-  Y: {aimZoneRect.height}  -|-  Pos: {aimZoneRect.position}");
     }
 
     // Triggered when touch input detected on AimZone
     public void SetAimZoneActive()
     {
-        aimZoneActive = true;
-        // We should st the inputaction reference of the camera rotation to the finger that touched the aim zone
-        foreach (UnityEngine.InputSystem.EnhancedTouch.Touch touch in UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches)
+        // Enable camera turning
+        cinemachineInput.enabled = true;
+        
+        // disable overlapping touch buttons
+        foreach (Image button in Buttons)
         {
-            if (touch.startScreenPosition.x > aimZoneSize.position.x)
-            {
-                Debug.Log("Aimzone TouchID: " + (UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count - 1));
-                // Sets the camera controls to the approximate touch input that selected the aim zone.
-                // Works at the start, needs to be pulled through with an update() function to secure touch ID
-                cinemachineInput.XYAxis = fingerID[touch.finger.index];
-            }
+            button.raycastTarget = false;
         }
     }
 
     public void AimZoneActive()
     {
-        /*
-         * find finger with the most right screenPosX value
-         */
-        // float maxX = 0f;
-        // aimFingerIndex = 0;
-        
-        // Debug.Log(UnityEngine.InputSystem.EnhancedTouch.Touch.fingers[0].screenPosition);
-        foreach (UnityEngine.InputSystem.EnhancedTouch.Touch touch in UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches)
+        int fingerI = 0;
+        foreach (InputActionReference fingerPosition in fingerPositions)
         {
-            if (touch.finger.screenPosition.x > aimZoneSize.position.x)
+            if (fingerPosition.action.ReadValue<Vector2>().x > 1000f)
             {
-                //Debug.Log($"{UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count} active touches. Current Touch index: {touch.finger.index}");
-                //Debug.Log($"touch.startScreenPos: {touch.startScreenPosition} | {touch.finger.screenPosition}");
-
-                // Sets the camera controls to...
-                cinemachineInput.XYAxis = fingerID[touch.finger.index];
+                Debug.Log($"{fingerPosition.action.ReadValue<Vector2>().x}  >  {1000f}");
+                cinemachineInput.XYAxis = fingerDeltas[fingerI];
             }
+            fingerI++;
         }
     }
     public void SetAimZoneInactive()
     {
-        aimZoneActive = false;
+        // disable camera turning
+        cinemachineInput.enabled = false;
+        
+        // enable touch buttons
+        foreach (Image button in Buttons)
+        {
+            button.raycastTarget = true;
+        }
     }
 }
