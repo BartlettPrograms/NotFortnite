@@ -331,7 +331,11 @@ namespace PhysicsBasedCharacterController
             }
         }
 
-
+        public void LandedEventComp()
+        {
+            Debug.Log("LandedEvent Triggered!! woo");
+        }
+        
         private void CheckStep()
         {
             bool tmpStep = false;

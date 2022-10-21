@@ -17,13 +17,15 @@ public class AimZone : MonoBehaviour
     [SerializeField] private InputActionReference[] fingerID;
     
 
-    private bool AimZoneActive = false;
+    private bool aimZoneActive = false;
     private Rect aimZoneSize;
+
+    private int aimFingerIndex;
 
 
     private void Start()
     {
-        aimZoneSize = _aimZone.gameObject.GetComponent<RectTransform>().rect;
+        aimZoneSize = gameObject.GetComponent<RectTransform>().rect;
         //Debug.Log($"X: {aimZoneSize.width}  -|-  Y: {aimZoneSize.height}  -|-  Pos: {aimZoneSize.position}");
     }
 
@@ -31,7 +33,7 @@ public class AimZone : MonoBehaviour
     void Update()
     {
         // If touching swipe zone turn aim controller on (this is on the cm vcam controller)
-        if (AimZoneActive)
+        if (aimZoneActive)
         {
             //Debug.Log(input.cameraInput);
             cinemachineInput.enabled = true;
@@ -43,23 +45,43 @@ public class AimZone : MonoBehaviour
     // Triggered when touch input detected on AimZone
     public void SetAimZoneActive()
     {
-        AimZoneActive = true;
+        aimZoneActive = true;
         // We should st the inputaction reference of the camera rotation to the finger that touched the aim zone
         foreach (UnityEngine.InputSystem.EnhancedTouch.Touch touch in UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches)
         {
             if (touch.startScreenPosition.x > aimZoneSize.position.x)
             {
-                //Debug.Log("Aimzone TouchID: " + UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count);
-                // Sets the camera controls to the approximate touch input that selected the aim zone. Works most of the time.
-                cinemachineInput.XYAxis = fingerID[UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count - 1];
+                Debug.Log("Aimzone TouchID: " + (UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count - 1));
+                // Sets the camera controls to the approximate touch input that selected the aim zone.
+                // Works at the start, needs to be pulled through with an update() function to secure touch ID
+                cinemachineInput.XYAxis = fingerID[touch.finger.index];
             }
         }
-
-        
     }
 
+    public void AimZoneActive()
+    {
+        /*
+         * find finger with the most right screenPosX value
+         */
+        // float maxX = 0f;
+        // aimFingerIndex = 0;
+        
+        // Debug.Log(UnityEngine.InputSystem.EnhancedTouch.Touch.fingers[0].screenPosition);
+        foreach (UnityEngine.InputSystem.EnhancedTouch.Touch touch in UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches)
+        {
+            if (touch.finger.screenPosition.x > aimZoneSize.position.x)
+            {
+                //Debug.Log($"{UnityEngine.InputSystem.EnhancedTouch.Touch.activeTouches.Count} active touches. Current Touch index: {touch.finger.index}");
+                //Debug.Log($"touch.startScreenPos: {touch.startScreenPosition} | {touch.finger.screenPosition}");
+
+                // Sets the camera controls to...
+                cinemachineInput.XYAxis = fingerID[touch.finger.index];
+            }
+        }
+    }
     public void SetAimZoneInactive()
     {
-        AimZoneActive = false;
+        aimZoneActive = false;
     }
 }

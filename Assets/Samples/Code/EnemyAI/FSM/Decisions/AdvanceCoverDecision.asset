@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1adf077c27c80e84c915c37b09cfde77, type: 3}
+  m_Name: AdvanceCoverDecision
+  m_EditorClassIdentifier: 
+  waitRounds: 1
+  targetNear: {fileID: 11400000, guid: 76d777a84669ad54c85bd6d08ef8f53f, type: 2}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b8a8978f5979594489a2ddfdf4b9dc1, type: 3}
+  m_Name: RifleStats
+  m_EditorClassIdentifier: 
+  aimOffset: {x: -23, y: 24, z: 0}
+  changeCoverChance: 33
+  weaponType: 2
+  bulletDamage: 9
+  shotSound: {fileID: 8300000, guid: 550d02157d7611d47b48f6ec57941b8f, type: 3}
+  reloadSound: {fileID: 8300000, guid: 5445df1500da47941851cfbf3ac1953f, type: 3}
+  shotRateFactor: 1.5
+  shotErrorRate: 0.05
+  muzzleFlash: {fileID: 1040379479616710939, guid: 56ce24c1ba722234395e08ec787ff14d,
+    type: 3}
+  shot: {fileID: 7050756295436598934, guid: 4beeec5288f782e4292564be660a53b5, type: 3}
+  sparks: {fileID: 1582818038116428783, guid: 305202af1e9d5cf4999160be5e328ae8, type: 3}
+  bulletHole: {fileID: 5129770298652297843, guid: ab4d283b96d4c9442858801b11d33cd0,
+    type: 3}

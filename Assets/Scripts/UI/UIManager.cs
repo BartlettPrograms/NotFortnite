@@ -16,12 +16,12 @@ namespace UI
         {
             if (option)
             {
-                Debug.Log("Opening Inventory");
+                //Debug.Log("Opening Inventory");
                 _inventoryInputManager.OpenInventory();
             }
             else
             {
-                Debug.Log("Closing Inventory");
+                //Debug.Log("Closing Inventory");
                 _inventoryInputManager.CloseInventory();
             }
         }
