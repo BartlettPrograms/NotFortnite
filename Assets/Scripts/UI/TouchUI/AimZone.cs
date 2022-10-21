@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Cinemachine;
 using MoreMountains.Tools;
 using PhysicsBasedCharacterController;
@@ -16,10 +14,10 @@ public class AimZone : MonoBehaviour
     [Header("TouchInputs")] 
     [SerializeField] private InputActionReference[] fingerDeltas;
     [SerializeField] private InputActionReference[] fingerPositions;
+    [SerializeField] private InputActionReference[] fingerInContacts;
 
     [SerializeField] private Image[] Buttons;
-
-
+    
     private bool aimZoneActive = false;
     private Rect aimZoneRect;
 
@@ -28,15 +26,21 @@ public class AimZone : MonoBehaviour
 
     private void Start()
     {
+        // Enable tracking touch controls
         foreach (InputActionReference fingerPosition in fingerPositions)
         {
-            // probably take this out later
             fingerPosition.action.Enable();
         }
+        foreach (InputActionReference fingerInContact in fingerInContacts)
+        {
+            fingerInContact.action.Enable();
+        }
+        
+        // Track aim zone size and location
         aimZoneRect = gameObject.GetComponent<RectTransform>().rect;
-        //Debug.Log($"X: {aimZoneRect.width}  -|-  Y: {aimZoneRect.height}  -|-  Pos: {aimZoneRect.position}");
     }
 
+    
     // Triggered when touch input detected on AimZone
     public void SetAimZoneActive()
     {
@@ -50,19 +54,27 @@ public class AimZone : MonoBehaviour
         }
     }
 
+    
     public void AimZoneActive()
     {
         int fingerI = 0;
         foreach (InputActionReference fingerPosition in fingerPositions)
         {
-            if (fingerPosition.action.ReadValue<Vector2>().x > 1000f)
+            if (fingerInContacts[fingerI].action.IsPressed())
             {
-                Debug.Log($"{fingerPosition.action.ReadValue<Vector2>().x}  >  {1000f}");
-                cinemachineInput.XYAxis = fingerDeltas[fingerI];
+                if (fingerPosition.action.ReadValue<Vector2>().x > 1000f)
+                {
+                    cinemachineInput.XYAxis = fingerDeltas[fingerI];
+                    Debug.Log($"{cinemachineInput.XYAxis} - {fingerPosition.action.ReadValue<Vector2>().x}  >  {1000f}");
+
+                }
             }
+            
             fingerI++;
         }
     }
+    
+    
     public void SetAimZoneInactive()
     {
         // disable camera turning
