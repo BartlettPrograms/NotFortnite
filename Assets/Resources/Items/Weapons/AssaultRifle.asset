@@ -34,8 +34,8 @@ MonoBehaviour:
   Quantity: 1
   ItemName: Assault Rifle
   ShortDescription: Gun2H
-  Description: This thing is expensive to run, but blasts death and destruction wherever
-    you point it
+  Description: This thing is expensive to run, but brings death and destruction to
+    wherever you point it
   Icon: {fileID: 184950751378207249, guid: a1fbd1aaf76d0b94e88551b7c406ee2c, type: 3}
   Prefab: {fileID: 3003538641576569574, guid: 5221b198b3c9e45babed52265f12495c, type: 3}
   DropProperties:

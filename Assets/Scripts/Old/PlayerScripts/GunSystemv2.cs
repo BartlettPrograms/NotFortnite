@@ -1,3 +1,4 @@
+using EnemyAI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -5,7 +6,7 @@ public class GunSystemv2 : MonoBehaviour
 {
     //Gun stats
     [SerializeField] private int damage;
-    [SerializeField] private float bulletSpeed = 120f;
+    [SerializeField] private float bulletSpeed = 12f;
     [SerializeField] private float shootIntoAirDistance, timeBetweenShooting, spread, range, reloadTime, timeBetweenBFShots; // timeBetweenShots = Burstfire variable. timeBetweenShooting = Automatic variable.
     [SerializeField] private int magazineSize, bulletsPerTap;
     [SerializeField] private bool allowButtonHold;
@@ -16,17 +17,16 @@ public class GunSystemv2 : MonoBehaviour
     private bool triggerExtra = true; // for event that only happens once while trigger hold
 
     //Extra Graphics
-    [SerializeField] private GameObject bulletHoleGraphic;
-    [SerializeField] private GameObject muzzleFlashGraphic;
-    [SerializeField] private GameObject bulletPrefab;
+    private GameObject muzzleFlashGraphic;
+    [SerializeField] private GameObject bulletDecal;
     
     // Bullet stuff
-    [SerializeField] private Transform bulletParent;
+    private Transform bulletParent;
 
     //Reference
-    [SerializeField] private Camera fpsCam;
+    private Camera fpsCam;
     private Transform fpsCamTransform;
-    [SerializeField] private Transform attackPoint;
+    private Transform attackPoint;
     private RaycastHit rayHit;
     
     //Audio
@@ -34,27 +34,21 @@ public class GunSystemv2 : MonoBehaviour
     [SerializeField] private AudioClip reloadingAudio;
     [SerializeField] private AudioClip gunshotAudio;
     [SerializeField] private AudioClip noAmmoAudio;
+    
 
     private void Awake()
     {
-        // Instantiate and turn on controls
-        NewControlScheme playerInputActions = new NewControlScheme();
-        playerInputActions.Enable();
-        
-        // Setup Controls here
-        // assign function to Shoot Control
-        playerInputActions.Player.Shoot.performed += gunTrigger;
-        playerInputActions.Player.Shoot.canceled += stopGunTrigger;
-        // assign function to Reload Control
-        playerInputActions.Player.Reload.performed += reloadAction;
+        bulletParent = GameObject.FindWithTag("BulletParent").transform;
+        fpsCam = Camera.main;
+        fpsCamTransform = fpsCam.transform;
+        attackPoint = gameObject.transform.GetChild(0);
+        muzzleFlashGraphic = attackPoint.GetChild(0).gameObject;
 
         // Gun stats setup
         bulletsLeft = magazineSize; // fill with ammo
         readyToShoot = true;
         reloading = false;
 
-        fpsCamTransform = fpsCam.transform;
-        
         // Assign audio
         audio = gameObject.GetComponent<AudioSource>();
     }
@@ -69,8 +63,8 @@ public class GunSystemv2 : MonoBehaviour
         // No ammo, trigger pulled
         if (bulletsLeft <= 0 && triggerExtra && readyToShoot && !reloading)
         {
-            audio.clip = noAmmoAudio;
-            audio.Play();           // I want this to trigger as soon as mouse clicks, not on release
+            //audio.clip = noAmmoAudio;
+            //audio.Play();           // I want this to trigger as soon as mouse clicks, not on release
             triggerExtra = false;
         }
     }
@@ -91,56 +85,57 @@ public class GunSystemv2 : MonoBehaviour
             // Calculate Direction with Spread
             Vector3 direction = fpsCam.transform.forward + new Vector3(x, y, z);
             
-            
-            
-            
-            
             //Shoot Raycast
             RaycastHit rayHit;
-            GameObject bullet = GameObject.Instantiate(bulletPrefab, attackPoint.position, Quaternion.identity, bulletParent);
-            BulletController bulletController = bullet.GetComponent<BulletController>();
+
             if (Physics.Raycast(fpsCam.transform.position, direction, out rayHit, Mathf.Infinity))
             {
-                bulletController.target = rayHit.point;
+                Debug.Log(rayHit.collider.name);
+                GameObject.Instantiate(bulletDecal, rayHit.point + rayHit.normal * .0001f, Quaternion.LookRotation(rayHit.normal));
+                
+                // Potentially damage enemy
+                if (rayHit.collider.tag == "Enemy")
+                {
+                    rayHit.collider.gameObject.GetComponent<EnemyHealth>().TakeDamage(rayHit.point, gameObject.transform.position, 50, rayHit.collider);
+                }
+                /*bulletController.target = rayHit.point;
                 bulletController.hit = true;
                 bulletController.damage = damage;
-                bulletController.bulletSpeed = bulletSpeed;
+                bulletController.bulletSpeed = bulletSpeed;*/
             }
             else
             {
-                bulletController.target = fpsCamTransform.position + fpsCamTransform.forward * shootIntoAirDistance;
+                /*bulletController.target = fpsCamTransform.position + fpsCamTransform.forward * shootIntoAirDistance;
                 bulletController.hit = true;
                 bulletController.damage = damage;
-                bulletController.bulletSpeed = bulletSpeed;
+                bulletController.bulletSpeed = bulletSpeed;*/
             }
         }
         
-        
-        
-        
-        
+
         //Shake Camera
-        CMCameraController.Instance.cameraShake(0.5f, 7f,  .135f);
+        //CMCameraController.Instance.cameraShake(0.5f, 7f,  .135f);
         
         // Muzzle flash Graphics
-        Instantiate(muzzleFlashGraphic, attackPoint.position, Quaternion.identity, attackPoint);
+        muzzleFlashGraphic.SetActive(true);
         
         // Audio
-        audio.Play();
+        //audio.Play();
 
         bulletsLeft--;
         Invoke("resetShot", timeBetweenShooting);
     }
     
     //Activate or Deactivate trigger from input
-    private void gunTrigger(InputAction.CallbackContext context)
+    public void gunTrigger()
     {
         isShooting = true;
         triggerExtra = true;
     }
-    private void stopGunTrigger(InputAction.CallbackContext context)
+    public void stopGunTrigger()
     {
         isShooting = false;
+        muzzleFlashGraphic.SetActive(false);
     }
 
     //Reload when given the input

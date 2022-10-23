@@ -232,7 +232,6 @@ namespace PhysicsBasedCharacterController
         
         /*  */
 
-
         private void Awake()
         {
             rigidbody = this.GetComponent<Rigidbody>();
@@ -261,7 +260,7 @@ namespace PhysicsBasedCharacterController
             jumpHold = input.jumpHold;
             sprint = input.sprint;
             crouch = input.crouch;
-            _strafing = input.aimIn;
+            //_strafing = input.aimIn;
             
             /* Select idle or run animation */
             if (currVelocity.x > 0.2 || currVelocity.z > 0.2 || currVelocity.x < -0.2 || currVelocity.z < -0.2)
@@ -523,6 +522,11 @@ namespace PhysicsBasedCharacterController
 
         #region Move
 
+        public void ToggleStrafing()
+        {
+            _strafing = !_strafing;
+        }
+        
         private void MoveCrouch()
         {
             if (crouch && isGrounded)
@@ -901,5 +905,6 @@ namespace PhysicsBasedCharacterController
 
         #endregion
 
+        
     }
 }

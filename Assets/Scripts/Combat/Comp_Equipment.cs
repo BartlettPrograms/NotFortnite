@@ -131,7 +131,7 @@ namespace MoreMountains.InventoryEngine
         
         
         /// <summary>
-        	/// Catches MMInventoryEvents and if it's an "inventory loaded" one, equips the first armor and weapon stored in the corresponding inventories
+        	/// Catches MMInventoryEvents and if it's an "inventory loaded" one, toggles the cameras ability to rotation 
         	/// </summary>
         	/// <param name="inventoryEvent">Inventory event.</param>
         	public virtual void OnMMEvent(MMInventoryEvent inventoryEvent)
@@ -139,12 +139,12 @@ namespace MoreMountains.InventoryEngine
                 if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryOpens)
                 {
 	                //Cursor.lockState = CursorLockMode.None;
-	                cmInput.enabled = false;
+	                //cmInput.enabled = false;
                 }
                 if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryCloses)
                 {
 	                //Cursor.lockState = CursorLockMode.Locked;
-	                cmInput.enabled = true;
+	                //cmInput.enabled = true;
                 }
                 
                 

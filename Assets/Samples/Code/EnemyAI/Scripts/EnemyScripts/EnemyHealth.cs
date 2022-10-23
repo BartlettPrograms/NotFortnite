@@ -16,6 +16,8 @@ namespace EnemyAI
 		[Tooltip("Use headshot damage multiplier?")]
 		public bool headshot;
 
+		[SerializeField] private float damageImpactForce = 100f;
+
 		private float totalHealth;                                  // The total NPC initial health.
 		private Transform weapon;                                   // The NPC weapon.
 		private Transform hud;                                      // The current NPC health HUD on scene.
@@ -88,7 +90,7 @@ namespace EnemyAI
 					Kill();
 
 				// Shooting a dead body? Just apply shot force on the ragdoll part.
-				bodyPart.GetComponent<Rigidbody>().AddForce(100f * direction.normalized, ForceMode.Impulse);
+				bodyPart.GetComponent<Rigidbody>().AddForce(damageImpactForce * direction.normalized, ForceMode.Impulse);
 			}
 		}
 

@@ -65,7 +65,7 @@ public class AimZone : MonoBehaviour
                 if (fingerPosition.action.ReadValue<Vector2>().x > 1000f)
                 {
                     cinemachineInput.XYAxis = fingerDeltas[fingerI];
-                    Debug.Log($"{cinemachineInput.XYAxis} - {fingerPosition.action.ReadValue<Vector2>().x}  >  {1000f}");
+                    // Debug.Log($"{cinemachineInput.XYAxis} - {fingerPosition.action.ReadValue<Vector2>().x}  >  {1000f}");
 
                 }
             }

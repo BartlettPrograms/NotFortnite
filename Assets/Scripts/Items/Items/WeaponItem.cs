@@ -29,6 +29,8 @@ namespace MoreMountains.InventoryEngine
 			//					(replace IDC script with Combat Manager)										(Replace the sprite with a weapon prefab)
 			//Below line accesses IDC script. It runs the function SetWeapon. It passes the inventory item and the sprite to display.
 			//										Weapon prefab is in place. Everything is good to go, I just cant resolve my Equipment script from here
+			//Below is demo code to set weapon into game onEquip
+			
 			//TargetInventory(playerID).TargetTransform.GetComponent<Comp_Equipment>().SetWeapon(WeaponPrefab,this);
 			return true;
 		}
