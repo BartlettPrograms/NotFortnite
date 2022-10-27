@@ -5077,6 +5077,8 @@ GameObject:
   - component: {fileID: 5942851172508794921}
   - component: {fileID: 5942851173557942708}
   - component: {fileID: 5942851173557942705}
+  - component: {fileID: 4352198344839948426}
+  - component: {fileID: 5428389032875259765}
   m_Layer: 12
   m_Name: enemy_pistol
   m_TagString: Enemy
@@ -5273,6 +5275,7 @@ MonoBehaviour:
   healthHUD: {fileID: 855114287364490468, guid: f01499156423b0f45af71e2a2e44b6b9, type: 3}
   bloodSample: {fileID: 2997732814145165452, guid: 42016ff7180d337488c019236ef8d3a8, type: 3}
   headshot: 1
+  damageImpactForce: 100
 --- !u!114 &5942851173557942705
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5290,6 +5293,36 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3dbd7bd5334b45048aaa279d8e8f234f, type: 3}
   - {fileID: 8300000, guid: 692b313d9c9e604429e0548f95c98a6b, type: 3}
   - {fileID: 8300000, guid: 86fc7dc063193724a98a05823a220b59, type: 3}
+--- !u!136 &4352198344839948426
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5944154459966541822}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!54 &5428389032875259765
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5944154459966541822}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
 --- !u!1 &5974385006330758082
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,16 +10,20 @@ namespace MoreMountains.InventoryEngine
         [SerializeField] private GameObject WeaponHolder;
 
         // Inventories
-        public Inventory ArmorInventory;
-        public Inventory WeaponInventory; // Listen to what is in here...
+        [SerializeField] private Inventory[] equippedWeapons; // Listen to what is in here...
         private InventoryItem metaItem;
-
         public string PlayerID = "Player1";
 
+        // Currently held weapon
+        [SerializeField] private int selectedEquipment = 0;
+        public int SelectedEquipment
+        { get => selectedEquipment; set { selectedEquipment = value; } }
+        
         // Equipped Weapon Variables
         //private bool weaponEquipped;
         private string equippedWeaponID;
         private string inventoryWeaponID;
+        private int equippedWeaponTypeInt = 0;
         private string weaponType;
         private int weaponTypeInt;
 
@@ -36,14 +40,22 @@ namespace MoreMountains.InventoryEngine
 	        //Cursor.lockState = CursorLockMode.Locked;
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
-	        readEquippedWeapon();
-	        PlayerWeaponBehaviour();
+	        if (equippedWeapons[selectedEquipment].Content[0] != null)
+	        {
+		        readEquippedWeapon();
+		        PlayerWeaponBehaviour();
+	        } else
+	        {
+		        inventoryWeaponID = null;
+		        weaponType = null;
+	        }
         }
 
         private void PlayerWeaponBehaviour()
         {
+	        
 	        switch (weaponType)
 	        {
 		        case null:
@@ -63,35 +75,39 @@ namespace MoreMountains.InventoryEngine
 			        break;
 	        }
 
-	        animator.SetInteger("WeaponType", weaponTypeInt);
+	        if (weaponTypeInt != equippedWeaponTypeInt)
+	        {
+		        equippedWeaponTypeInt = weaponTypeInt;
+		        animator.SetInteger("WeaponType", weaponTypeInt);
+		        if (weaponType == null)
+		        {
+			        animator.CrossFadeInFixedTime("Base Unarmed", 0.25f);
+		        }
+		        else
+			        animator.CrossFadeInFixedTime("Base " + weaponType, 0.25f);
+	        }
         }
 
         private void readEquippedWeapon()
         {
+	        // equippedWeapons[selectedEquipment]
+	        // weapons equipped[current weapon that should be held in hand]
+	        
 	        // Read Equipped Weapon details
-	        if (WeaponInventory.Content[0] != null)
-	        {
-		        inventoryWeaponID = WeaponInventory.Content[0].ItemID;
-		        weaponType = WeaponInventory.Content[0].ShortDescription;
-	        }
-	        // Read if no weapons Equipped
-	        else
-	        {
-		        inventoryWeaponID = null;
-		        weaponType = null;
-	        }
+	        inventoryWeaponID = equippedWeapons[selectedEquipment].Content[0].ItemID;
+	        weaponType = equippedWeapons[selectedEquipment].Content[0].ShortDescription;
 
 	        // If new weapon equip detected
-	        if (equippedWeaponID != inventoryWeaponID)
-	        {
-		        // Set the comparison variables to be the same, as to not trigger until next weapon change
-		        equippedWeaponID = inventoryWeaponID;
-		        // Get metaData about weapon
-		        metaItem = WeaponInventory.Content[0];
-		        
-		        // Code to hold a new weapon
-		        swapWeapons();
-	        }
+            if (equippedWeaponID != inventoryWeaponID)
+            {
+                // Set the comparison variables to be the same, as to not trigger until next weapon change
+                equippedWeaponID = inventoryWeaponID;
+                // Get metaData about weapon
+                metaItem = equippedWeapons[selectedEquipment].Content[0];
+                
+                // Code to hold a new weapon
+                swapWeapons(equippedWeapons[selectedEquipment]);
+            }
         }
         
         private void destroyHeldWeapon()
@@ -102,12 +118,14 @@ namespace MoreMountains.InventoryEngine
 	        }
         }
 
-        private void swapWeapons()
+        private void swapWeapons(Inventory inv)
         {
 	        // Code to hold a new weapon
+	        Debug.Log("DestroyingWeps");
 	        destroyHeldWeapon();
 	        if (equippedWeaponID != null)
-		        SetWeapon(WeaponInventory.Content[0]);
+		        Debug.Log($"Spawning: {inv.Content[0]}");
+		        SetWeapon(inv.Content[0]);
         }
         
         public void SetWeapon(InventoryItem metaItem)
@@ -126,7 +144,17 @@ namespace MoreMountains.InventoryEngine
             }
 
             weapon.GetComponent<Rigidbody>().detectCollisions = false;
+            GunSystemv2 gunScript = weapon.GetComponent<GunSystemv2>();
+            if (gunScript)
+            {
+	            gunScript.enabled = true;
+            }
             // If colliders exist, they should ALL be disabled below. or maybe we could just disable the item picker
+        }
+
+        public void PullOutGun()
+        {
+	        selectedEquipment = 1;
         }
         
         

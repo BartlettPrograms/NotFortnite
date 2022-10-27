@@ -1,4 +1,5 @@
 using EnemyAI;
+using PhysicsBasedCharacterController;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,6 +17,10 @@ public class GunSystemv2 : MonoBehaviour
     private bool isShooting, readyToShoot, reloading;
     private bool triggerExtra = true; // for event that only happens once while trigger hold
 
+    // Autofire
+    private RaycastHit scanRay;
+    private float scanTimer = 0f;
+    
     //Extra Graphics
     private GameObject muzzleFlashGraphic;
     [SerializeField] private GameObject bulletDecal;
@@ -35,6 +40,9 @@ public class GunSystemv2 : MonoBehaviour
     [SerializeField] private AudioClip gunshotAudio;
     [SerializeField] private AudioClip noAmmoAudio;
     
+    // Character scripts
+    private CharacterManager _characterManager;
+    
 
     private void Awake()
     {
@@ -51,28 +59,55 @@ public class GunSystemv2 : MonoBehaviour
 
         // Assign audio
         audio = gameObject.GetComponent<AudioSource>();
+        _characterManager = transform.root.GetComponent<CharacterManager>(); // Player must be at hierarchy root or will throw error.
     }
 
     private void FixedUpdate()
     {
+        checkAimTarget();
+        
         // Fire Ammo
-        if (readyToShoot && isShooting && !reloading && bulletsLeft > 0)
+        if (_characterManager.Strafing && readyToShoot && isShooting && !reloading && bulletsLeft > 0)
         {
             shoot();
         }
         // No ammo, trigger pulled
         if (bulletsLeft <= 0 && triggerExtra && readyToShoot && !reloading)
         {
-            //audio.clip = noAmmoAudio;
-            //audio.Play();           // I want this to trigger as soon as mouse clicks, not on release
+            audio.clip = noAmmoAudio;
+            audio.Play();           // I want this to trigger as soon as mouse clicks, not on release
             triggerExtra = false;
         }
     }
 
-    //Shooting script
+    // Scan guns aim and look for enemy to hit
+    private void checkAimTarget()
+    {
+        // Intermittently shoot raycast
+        scanTimer += Time.deltaTime;
+        if (scanTimer >= 0.2)
+        {
+            // Reset timer
+            scanTimer = 0;
+
+            // Shoot Raycast
+            RaycastHit scanRay;
+
+            if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out rayHit, Mathf.Infinity))
+            {
+                if (rayHit.collider.tag == "Enemy")
+                {
+                    // Found enemy, get ready to fire
+                    isShooting = true;
+                }
+            }
+        }
+    }
+
+    // Old Shooting script
     private void shoot()
     {
-        if (!allowButtonHold) isShooting = false; // Deactivate trigger if weapon semi-automatic
+        isShooting = false; // Deactivate trigger
         readyToShoot = false;   // Deactivate chamber for bullet reload
         
         //Shooting Physics here
@@ -120,7 +155,7 @@ public class GunSystemv2 : MonoBehaviour
         muzzleFlashGraphic.SetActive(true);
         
         // Audio
-        //audio.Play();
+        audio.Play();
 
         bulletsLeft--;
         Invoke("resetShot", timeBetweenShooting);

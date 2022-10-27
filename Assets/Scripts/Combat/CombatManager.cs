@@ -18,10 +18,13 @@ namespace PlayerCombatController
 
         [Header("Attacking")]
         [SerializeField] private int _damage = 10;
-        [SerializeField] private Comp_Hitbox _hitboxLeftFist;
         [SerializeField] private GameObject _hitSparkPrefab;
-
         [SerializeField] private Comp_Equipment Equipment;
+        
+        [Header("Hitbox")]
+        [SerializeField] private Comp_Hitbox _hitboxLeftFist;
+        [SerializeField] private GameObject _weaponHolder;
+        private Comp_Hitbox _hitboxMeleeWeapon;
         
         // Processing
         private Comp_SMBEventCurrator _eventCurrator;
@@ -30,15 +33,18 @@ namespace PlayerCombatController
         private bool attack;
         private bool attacking = false;
         private bool _jabbing;
-        
+        private bool _swingingSword;
+
         // Animation State Names
         private string _animJab;
-        [SerializeField] 
         private string[] animations;
 
         private List<GameObject> _objectsHit = new List<GameObject>();
         
         int IHitResponder.Damage { get => _damage; }
+
+        public bool IsAttacking { get => attacking; } // animator uses this
+        //public bool AttackInput { get => attack; }
 
         void Start()
         {
@@ -52,12 +58,24 @@ namespace PlayerCombatController
 
         void Update()
         {
-            attack = input.attack;
+            //attack = input.attack;'
+            
         }
 
         private void FixedUpdate()
         {
-            MoveAttack();
+            //MoveAttack();
+        }
+
+        public bool AttackInput()
+        {
+            if (attack)
+            {
+                attack = false;
+                return true;
+            }
+            else
+                return false;
         }
 
         public void MoveAttack()
@@ -68,12 +86,27 @@ namespace PlayerCombatController
                 {
                     characterManager.SetAnimationLock = true;
                     _animator.CrossFadeInFixedTime(animations[Equipment.WeaponTypeInt], 0.1f, 0, 0);
-                    //Debug.Log(Equipment.WeaponTypeInt);
                 }
             }
+            //Jab check hits
             if (_jabbing)
             {
                 _hitboxLeftFist.CheckHit();
+            }
+            // Melee Weapon check hits
+            if (_swingingSword)
+            {
+                // If sword exists, check hit as normal
+                if (_hitboxMeleeWeapon)
+                {
+                    _hitboxMeleeWeapon.CheckHit();
+                }
+                else // Else first time, find sword and enable the hit responder. Then proceed as normal
+                {
+                    _hitboxMeleeWeapon = _weaponHolder.GetComponentInChildren<Comp_Hitbox>();
+                    _hitboxMeleeWeapon.HitResponder = this;
+                    _hitboxMeleeWeapon.CheckHit();
+                }
             }
         }
 
@@ -90,15 +123,27 @@ namespace PlayerCombatController
         {
             switch (eventName)
             {
+                // Punching Events
                 case "JabStart":
                     _objectsHit.Clear();
                     _jabbing = true;
                     break;
-                
                 case "JabEnd":
                     _jabbing = false;
                     break;
                 
+                // Sword Events
+                case "SwingSwordStart":
+                    Debug.Log("StartDetectionEvent");
+                    _objectsHit.Clear();
+                    _swingingSword = true;
+                    break;
+                case  "SwingSwordEnd":
+                    Debug.Log("EndDetectionEvent");
+                    _swingingSword = false;
+                    break;
+                
+                // Applies to all attack events
                 case "AnimationEnd":
                     characterManager.SetAnimationLock = false;
                     break;

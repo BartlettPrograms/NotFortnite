@@ -29,6 +29,7 @@ namespace Combat
 
         public void Response(HitData data)
         {
+            Debug.Log("Big Hello, Why aint you getting smacked.");
             Vector3 _force = -data.hitNormal * data.damage;
             Vector3 _point = data.hitPoint;
             m_rbBag.AddForceAtPosition(_force, _point, ForceMode.Impulse);

@@ -82,7 +82,7 @@ MonoBehaviour:
     MaximumScale: {x: 1, y: 1, z: 1}
   MaximumStack: 1
   ItemClass: 2
-  TargetEquipmentInventoryName: PlayerWeaponInventory
+  TargetEquipmentInventoryName: PlayerRangedWeaponInventory
   EquippedSound: {fileID: 0}
   UsedSound: {fileID: 0}
   MovedSound: {fileID: 0}

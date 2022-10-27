@@ -4,13 +4,18 @@ using UnityEngine;
 
 public class Comp_Hitbox : MonoBehaviour, IHitDetector
 {
-    [SerializeField] private BoxCollider m_collider;
+    private BoxCollider m_collider;
     [SerializeField] private LayerMask m_layerMask;
     [SerializeField] private HurtboxMask m_hurtboxMask = HurtboxMask.Enemy;
 
     private float m_thickness = 0.025f;
     private IHitResponder m_hitResponder;
     public IHitResponder HitResponder { get => m_hitResponder; set => m_hitResponder = value; }
+
+    public void Awake()
+    {
+        m_collider = gameObject.GetComponent<BoxCollider>();
+    }
 
     public void CheckHit()
     {

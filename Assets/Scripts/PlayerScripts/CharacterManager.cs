@@ -229,7 +229,7 @@ namespace PhysicsBasedCharacterController
         // Getters
         public bool AnimationLock { get => _inAnimation; }
         public bool SetAnimationLock { set => _inAnimation = value; }
-        
+        public bool Strafing { get => _strafing; }
         /*  */
 
         private void Awake()
