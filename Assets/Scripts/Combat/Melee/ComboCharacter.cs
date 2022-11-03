@@ -20,13 +20,11 @@ public class ComboCharacter : MonoBehaviour
         playerCombat = GetComponent<CombatManager>();
         playerEquipment = GetComponent<Comp_Equipment>();
         meleeStateMachine.SetNextStateToMain();
-        Debug.Log(typeof(IdleCombatState));
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(meleeStateMachine.CurrentState.GetType());
         if (playerCombat.AttackInput() && meleeStateMachine.CurrentState.GetType() == typeof(IdleCombatState))
         {
             // player input detected

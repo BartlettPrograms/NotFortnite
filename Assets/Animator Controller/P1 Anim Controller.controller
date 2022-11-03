@@ -2363,11 +2363,11 @@ MonoBehaviour:
   - fired: 0
     eventName: SwingSwordStart
     timing: 2
-    onUpdateFrame: 18
+    onUpdateFrame: 35
   - fired: 0
     eventName: SwingSwordEnd
     timing: 2
-    onUpdateFrame: 38
+    onUpdateFrame: 50
   - fired: 0
     eventName: AnimationEnd
     timing: 1

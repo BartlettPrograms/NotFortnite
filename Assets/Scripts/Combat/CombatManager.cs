@@ -77,7 +77,6 @@ namespace PlayerCombatController
         {
             if (attack)
             {
-                characterManager.SetAnimationLock = true;
                 attack = false;
                 return true;
             }
@@ -112,6 +111,11 @@ namespace PlayerCombatController
         public void UnlockAnimation()
         {
             characterManager.SetAnimationLock = false;
+        }
+
+        public void LockAnimation()
+        {
+            characterManager.SetAnimationLock = true;
         }
         
         public void SetAttackTrue()

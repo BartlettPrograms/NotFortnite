@@ -34,6 +34,9 @@ namespace MoreMountains.InventoryEngine
         private GameObject weaponPrefab;
         private InventoryItem item;
         
+        // UI
+        [SerializeField] private GameObject aimButton;
+        
         // Gameobjects
         [SerializeField] Animator animator;
         [SerializeField] private CinemachineInputProvider cmInput;
@@ -47,22 +50,28 @@ namespace MoreMountains.InventoryEngine
 
         private void FixedUpdate()
         {
+	        // if new weapon is selected to be held, execute...
 	        if (equippedWeapons[selectedEquipment].Content[0] != null)
 	        {
 		        readEquippedWeapon();
 		        
 	        } else
 	        {
+		        // new weapon detected but hands are empty, hold nothing
 		        inventoryWeaponID = null;
 		        weaponType = null;
 	        }
 	        PlayerWeaponBehaviour();
-	        CrosshairBehaviour();
+	        autoToggleAimButton();
         }
 
-        private void CrosshairBehaviour()
+        private void autoToggleAimButton()
         {
-	        
+	        if (equippedWeapons[1].Content[0])
+	        {
+		        aimButton.SetActive(true);
+	        }
+	        else aimButton.SetActive(false);
         }
 
         private void PlayerWeaponBehaviour()
