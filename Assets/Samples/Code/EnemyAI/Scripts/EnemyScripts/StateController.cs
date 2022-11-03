@@ -107,6 +107,7 @@ namespace EnemyAI
 
 		void Awake()
 		{
+			aimTarget = GameObject.FindGameObjectWithTag("Player").transform;
 			// Setup the references.
 			if (coverSpot == null)
 				coverSpot = new Dictionary<int, Vector3>();

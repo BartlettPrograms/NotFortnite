@@ -1,6 +1,8 @@
 using Cinemachine;
 using UnityEngine;
 using MoreMountains.Tools;
+using PlayerCombatController;
+using Unity.VisualScripting;
 
 namespace MoreMountains.InventoryEngine
 {
@@ -16,6 +18,7 @@ namespace MoreMountains.InventoryEngine
 
         // Currently held weapon
         [SerializeField] private int selectedEquipment = 0;
+        [SerializeField] private GameObject crosshairUI;
         public int SelectedEquipment
         { get => selectedEquipment; set { selectedEquipment = value; } }
         
@@ -34,10 +37,12 @@ namespace MoreMountains.InventoryEngine
         // Gameobjects
         [SerializeField] Animator animator;
         [SerializeField] private CinemachineInputProvider cmInput;
+        private CombatManager _combatManager;
 
         private void Start()
         {
 	        //Cursor.lockState = CursorLockMode.Locked;
+	        _combatManager = gameObject.GetComponent<CombatManager>();
         }
 
         private void FixedUpdate()
@@ -45,33 +50,44 @@ namespace MoreMountains.InventoryEngine
 	        if (equippedWeapons[selectedEquipment].Content[0] != null)
 	        {
 		        readEquippedWeapon();
-		        PlayerWeaponBehaviour();
+		        
 	        } else
 	        {
 		        inventoryWeaponID = null;
 		        weaponType = null;
 	        }
+	        PlayerWeaponBehaviour();
+	        CrosshairBehaviour();
+        }
+
+        private void CrosshairBehaviour()
+        {
+	        
         }
 
         private void PlayerWeaponBehaviour()
         {
-	        
 	        switch (weaponType)
 	        {
 		        case null:
 			        weaponTypeInt = 0;
+			        crosshairUI.SetActive(false);
 			        break;
 		        case "Melee1H":
 			        weaponTypeInt = 1;
+			        crosshairUI.SetActive(false);
 			        break;
 		        case "Gun1H":
 			        weaponTypeInt = 2;
+			        crosshairUI.SetActive(true);
 			        break;
 		        case "Gun2H":
 			        weaponTypeInt = 3;
+			        crosshairUI.SetActive(true);
 			        break;
 		        case "Staff":
 			        weaponTypeInt = 4;
+			        crosshairUI.SetActive(true);
 			        break;
 	        }
 
@@ -82,6 +98,7 @@ namespace MoreMountains.InventoryEngine
 		        if (weaponType == null)
 		        {
 			        animator.CrossFadeInFixedTime("Base Unarmed", 0.25f);
+			        destroyHeldWeapon();
 		        }
 		        else
 			        animator.CrossFadeInFixedTime("Base " + weaponType, 0.25f);
@@ -106,7 +123,9 @@ namespace MoreMountains.InventoryEngine
                 metaItem = equippedWeapons[selectedEquipment].Content[0];
                 
                 // Code to hold a new weapon
-                swapWeapons(equippedWeapons[selectedEquipment]);
+                if (!metaItem.IsUnityNull())
+	                swapWeapons(equippedWeapons[selectedEquipment]);
+                //else weaponType = null;
             }
         }
         
@@ -115,6 +134,7 @@ namespace MoreMountains.InventoryEngine
 	        for (var i = WeaponHolder.transform.childCount - 1; i >= 0; i--)
 	        {
 		        Destroy(WeaponHolder.transform.GetChild(i).gameObject);
+		        crosshairUI.SetActive(false);
 	        }
         }
 

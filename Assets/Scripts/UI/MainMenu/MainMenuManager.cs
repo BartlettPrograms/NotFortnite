@@ -22,6 +22,6 @@ public class MainMenuManager : MonoBehaviour
 
     public void SandboxModePressed()
     {
-        SceneManager.LoadScene(2, LoadSceneMode.Single);
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 }

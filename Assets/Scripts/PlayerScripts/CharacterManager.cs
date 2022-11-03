@@ -1,6 +1,7 @@
 ﻿using System;
 using MoreMountains.Tools;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,6 +12,9 @@ namespace PhysicsBasedCharacterController
     [RequireComponent(typeof(Rigidbody))]
     public class CharacterManager : MonoBehaviour
     {
+        // My stuff
+        [SerializeField] Vector3 playerHeightCorrection = Vector3.up;
+        
         [Header("Movement specifics")]
         [Tooltip("Layers where the player can stand on")]
         [SerializeField] LayerMask groundMask;
@@ -234,8 +238,8 @@ namespace PhysicsBasedCharacterController
 
         private void Awake()
         {
-            rigidbody = this.GetComponent<Rigidbody>();
-            collider = this.GetComponent<CapsuleCollider>();
+            rigidbody = gameObject.GetComponent<Rigidbody>();
+            collider = gameObject.GetComponent<CapsuleCollider>();
             originalColliderHeight = collider.height;
             
             
@@ -526,6 +530,11 @@ namespace PhysicsBasedCharacterController
         {
             _strafing = !_strafing;
         }
+
+        public void SetStrafing(bool val)
+        {
+            _strafing = val;
+        }
         
         private void MoveCrouch()
         {
@@ -544,7 +553,7 @@ namespace PhysicsBasedCharacterController
                 collider.height = newHeight;
                 collider.center = new Vector3(0f, -newHeight * crouchHeightMultiplier, 0f);
 
-                headPoint.position = new Vector3(transform.position.x + POV_crouchHeadHeight.x, transform.position.y + POV_crouchHeadHeight.y, transform.position.z + POV_crouchHeadHeight.z);
+                //headPoint.position = new Vector3(transform.position.x + POV_crouchHeadHeight.x, transform.position.y + POV_crouchHeadHeight.y, transform.position.z + POV_crouchHeadHeight.z);
             }
             else
             {
@@ -558,9 +567,9 @@ namespace PhysicsBasedCharacterController
                 
                 isCrouch = false;
                 collider.height = originalColliderHeight;
-                collider.center = Vector3.zero;
+                collider.center = playerHeightCorrection;
 
-                headPoint.position = new Vector3(transform.position.x + POV_normalHeadHeight.x, transform.position.y + POV_normalHeadHeight.y, transform.position.z + POV_normalHeadHeight.z);
+                //headPoint.position = new Vector3(transform.position.x + POV_normalHeadHeight.x, transform.position.y + POV_normalHeadHeight.y, transform.position.z + POV_normalHeadHeight.z);
             }
         }
 

@@ -374,11 +374,11 @@ MonoBehaviour:
   m_motionTime: 5
   Events:
   - fired: 0
-    eventName: JabStart
+    eventName: SwingSwordStart
     timing: 2
     onUpdateFrame: 18
   - fired: 0
-    eventName: JabEnd
+    eventName: SwingSwordEnd
     timing: 2
     onUpdateFrame: 38
   - fired: 0
@@ -2361,11 +2361,11 @@ MonoBehaviour:
   m_motionTime: 5
   Events:
   - fired: 0
-    eventName: JabStart
+    eventName: SwingSwordStart
     timing: 2
     onUpdateFrame: 18
   - fired: 0
-    eventName: JabEnd
+    eventName: SwingSwordEnd
     timing: 2
     onUpdateFrame: 38
   - fired: 0
@@ -2657,11 +2657,11 @@ MonoBehaviour:
   m_motionTime: 5
   Events:
   - fired: 0
-    eventName: JabStart
+    eventName: SwingSwordStart
     timing: 2
     onUpdateFrame: 18
   - fired: 0
-    eventName: JabEnd
+    eventName: SwingSwordEnd
     timing: 2
     onUpdateFrame: 38
   - fired: 0

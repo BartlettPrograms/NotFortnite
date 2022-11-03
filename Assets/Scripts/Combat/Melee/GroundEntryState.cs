@@ -8,6 +8,8 @@ public class GroundEntryState : MeleeBaseState
     {
         base.OnEnter(_stateMachine);
 
+        Debug.Log("FIRST ATTACK HERE!! @GroundEntryState");
+        
         //Attack
         attackIndex = 1;
         duration = 0.65f;

@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 3c9d25a867719b3fb8ffc3f2a822ac45
 ModelImporter:
-  serializedVersion: 22102
+  serializedVersion: 22103
   internalIDToNameTable:
   - first:
       74: -203655887218126122
@@ -39,8 +39,8 @@ ModelImporter:
       name: Stable Sword Inward Slash
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 0
-      lastFrame: 66
+      firstFrame: 15
+      lastFrame: 43
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -51,7 +51,7 @@ ModelImporter:
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 1
+      loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
       keepOriginalPositionY: 0
       keepOriginalPositionXZ: 1
@@ -600,6 +600,7 @@ ModelImporter:
   avatarSetup: 2
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 1
   additionalBone: 0
   userData: 
   assetBundleName: 

@@ -19,11 +19,14 @@ public class ComboCharacter : MonoBehaviour
         meleeStateMachine = GetComponent<StateMachine>();
         playerCombat = GetComponent<CombatManager>();
         playerEquipment = GetComponent<Comp_Equipment>();
+        meleeStateMachine.SetNextStateToMain();
+        Debug.Log(typeof(IdleCombatState));
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(meleeStateMachine.CurrentState.GetType());
         if (playerCombat.AttackInput() && meleeStateMachine.CurrentState.GetType() == typeof(IdleCombatState))
         {
             // player input detected
@@ -31,9 +34,8 @@ public class ComboCharacter : MonoBehaviour
             {
                 // on first tap, pull out sword. dont swing until sword is in hand and get attack input
                 playerEquipment.SelectedEquipment = 0;
-            } else 
-                // fire attack
-                meleeStateMachine.SetNextState(new GroundEntryState());
+            } else meleeStateMachine.SetNextState(new GroundEntryState());// fire attack
+                
         }
         
         

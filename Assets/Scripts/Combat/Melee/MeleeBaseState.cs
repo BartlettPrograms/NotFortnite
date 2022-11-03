@@ -34,4 +34,14 @@ public class MeleeBaseState : State
     {
         base.OnExit();
     }
+
+    private void setAnimationLocked()
+    {
+        
+    }
+
+    private void setAnimationUnlocked()
+    {
+        
+    }
 }

@@ -24,4 +24,9 @@ public class GroundFinisherState : MeleeBaseState
             stateMachine.SetNextStateToMain();
         }
     }
+
+    public override void OnExit()
+    {
+        base.OnExit();
+    }
 }

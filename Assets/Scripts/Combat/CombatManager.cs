@@ -46,6 +46,12 @@ namespace PlayerCombatController
         public bool IsAttacking { get => attacking; } // animator uses this
         //public bool AttackInput { get => attack; }
 
+        public void GetMeleeWepHitbox()
+        {
+            _hitboxMeleeWeapon = _weaponHolder.GetComponentInChildren<Comp_Hitbox>();
+            _hitboxMeleeWeapon.HitResponder = this;
+        }
+
         void Start()
         {
             _eventCurrator = _animator.GetComponent<Comp_SMBEventCurrator>();
@@ -64,13 +70,14 @@ namespace PlayerCombatController
 
         private void FixedUpdate()
         {
-            //MoveAttack();
+            MoveAttack();
         }
 
         public bool AttackInput()
         {
             if (attack)
             {
+                characterManager.SetAnimationLock = true;
                 attack = false;
                 return true;
             }
@@ -80,14 +87,7 @@ namespace PlayerCombatController
 
         public void MoveAttack()
         {
-            if (!characterManager.AnimationLock)
-            {
-                if (attack)
-                {
-                    characterManager.SetAnimationLock = true;
-                    _animator.CrossFadeInFixedTime(animations[Equipment.WeaponTypeInt], 0.1f, 0, 0);
-                }
-            }
+            // Hitbox handling. simple functions just turn the right hitbox on for correct animation when bool = true
             //Jab check hits
             if (_jabbing)
             {
@@ -103,13 +103,17 @@ namespace PlayerCombatController
                 }
                 else // Else first time, find sword and enable the hit responder. Then proceed as normal
                 {
-                    _hitboxMeleeWeapon = _weaponHolder.GetComponentInChildren<Comp_Hitbox>();
-                    _hitboxMeleeWeapon.HitResponder = this;
+                    GetMeleeWepHitbox();
                     _hitboxMeleeWeapon.CheckHit();
                 }
             }
         }
 
+        public void UnlockAnimation()
+        {
+            characterManager.SetAnimationLock = false;
+        }
+        
         public void SetAttackTrue()
         {
             attack = true;
@@ -123,6 +127,8 @@ namespace PlayerCombatController
         {
             switch (eventName)
             {
+                // This recieves event names from the animator to time turning hitboxes on and off
+                // Uses components attatched to animator
                 // Punching Events
                 case "JabStart":
                     _objectsHit.Clear();
@@ -134,12 +140,10 @@ namespace PlayerCombatController
                 
                 // Sword Events
                 case "SwingSwordStart":
-                    Debug.Log("StartDetectionEvent");
                     _objectsHit.Clear();
                     _swingingSword = true;
                     break;
                 case  "SwingSwordEnd":
-                    Debug.Log("EndDetectionEvent");
                     _swingingSword = false;
                     break;
                 
