@@ -86,4 +86,6 @@ MonoBehaviour:
   MovedSound: {fileID: 0}
   DroppedSound: {fileID: 0}
   UseDefaultSoundsIfNull: 1
+  damage: 14
+  HandheldPrefab: {fileID: 2676351740051262562, guid: f022da016c5900477a595b6236c38cb4, type: 3}
   WeaponPrefab: {fileID: 0}

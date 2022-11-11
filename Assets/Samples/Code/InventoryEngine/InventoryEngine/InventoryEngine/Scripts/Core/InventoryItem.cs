@@ -125,6 +125,9 @@ namespace MoreMountains.InventoryEngine
 		protected Inventory _targetInventory = null;
 		protected Inventory _targetEquipmentInventory = null;
 
+		public float damage = 0f;
+		public GameObject HandheldPrefab;
+
 		/// <summary>
 		/// Gets the target inventory.
 		/// </summary>

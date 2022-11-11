@@ -4,7 +4,7 @@ namespace Combat
 {
     public class HitData
     {
-        public int damage;
+        public float damage;
         public Vector3 hitPoint;
         public Vector3 hitNormal;
         public IHurtbox hurtbox;
@@ -39,7 +39,7 @@ namespace Combat
 
     public interface IHitResponder
     {
-        int Damage { get; }
+        float Damage { get; }
         public bool CheckHit(HitData data);
         public void Response(HitData data);
     }

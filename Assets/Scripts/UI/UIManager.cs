@@ -26,26 +26,12 @@ namespace UI
             }
         }
         
-        public void ToggleTouchUI()
+        public void ToggleTouchUI(bool option)
         {
-            // Checks first element and assumes rest of them are the same
-            if (touchUIElements[0].activeInHierarchy)
+            foreach (GameObject element in touchUIElements)
             {
-                ToggleInventory(true);
-                foreach (GameObject element in touchUIElements)
-                {
-                    // Deactivate touch element
-                    element.SetActive(false);
-                }
-            }
-            else
-            {
-                ToggleInventory(false);
-                foreach (GameObject element in touchUIElements)
-                {
-                    // Activate touch element
-                    element.SetActive(true);
-                }
+                // Activate touch element
+                element.SetActive(option);
             }
         }
     }

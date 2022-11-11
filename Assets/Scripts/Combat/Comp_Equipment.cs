@@ -9,7 +9,8 @@ namespace MoreMountains.InventoryEngine
     public class Comp_Equipment : MonoBehaviour, MMEventListener<MMInventoryEvent>
     {
         // Right hand holder for weapons
-        [SerializeField] private GameObject WeaponHolder;
+        [SerializeField] private GameObject handHolderRanged;
+        [SerializeField] private GameObject handHolderMelee;
 
         // Inventories
         [SerializeField] private Inventory[] equippedWeapons; // Listen to what is in here...
@@ -50,8 +51,9 @@ namespace MoreMountains.InventoryEngine
 
         private void FixedUpdate()
         {
+	        PlayerWeaponBehaviour();
 	        // if new weapon is selected to be held, execute...
-	        if (equippedWeapons[selectedEquipment].Content[0] != null)
+	        if (!ReferenceEquals (equippedWeapons[selectedEquipment].Content[0], null))
 	        {
 		        readEquippedWeapon();
 		        
@@ -61,7 +63,6 @@ namespace MoreMountains.InventoryEngine
 		        inventoryWeaponID = null;
 		        weaponType = null;
 	        }
-	        PlayerWeaponBehaviour();
 	        autoToggleAimButton();
         }
 
@@ -140,9 +141,14 @@ namespace MoreMountains.InventoryEngine
         
         private void destroyHeldWeapon()
         {
-	        for (var i = WeaponHolder.transform.childCount - 1; i >= 0; i--)
+	        for (var i = handHolderRanged.transform.childCount - 1; i >= 0; i--)
 	        {
-		        Destroy(WeaponHolder.transform.GetChild(i).gameObject);
+		        Destroy(handHolderRanged.transform.GetChild(i).gameObject);
+		        crosshairUI.SetActive(false);
+	        }
+	        for (var i = handHolderMelee.transform.childCount - 1; i >= 0; i--)
+	        {
+		        Destroy(handHolderMelee.transform.GetChild(i).gameObject);
 		        crosshairUI.SetActive(false);
 	        }
         }
@@ -153,103 +159,97 @@ namespace MoreMountains.InventoryEngine
 	        Debug.Log("DestroyingWeps");
 	        destroyHeldWeapon();
 	        if (equippedWeaponID != null)
-		        Debug.Log($"Spawning: {inv.Content[0]}");
 		        SetWeapon(inv.Content[0]);
         }
         
         public void SetWeapon(InventoryItem metaItem)
         {
 	        // Weapon needs to be instantiated Locally!
-            GameObject weapon = Instantiate(metaItem.Prefab, Vector3.zero, Quaternion.identity, WeaponHolder.transform); // instantiate newWeapon;
-
+            GameObject weapon = Instantiate(metaItem.HandheldPrefab, Vector3.zero, Quaternion.identity, getWeaponHandHolder(metaItem.ShortDescription).transform); // instantiate newWeapon;
+            _combatManager.Damage = metaItem.damage;
+            
             weapon.transform.localPosition = Vector3.zero;
             weapon.transform.localRotation = Quaternion.identity;
-            
-            // These GetCompenents arent good. We need to spawn a better prefab than the dropped item.
-            BoxCollider[] colliders = weapon.GetComponents<BoxCollider>();
-            foreach (BoxCollider collider in colliders)
-            {
-	            collider.enabled = false;
-            }
 
-            weapon.GetComponent<Rigidbody>().detectCollisions = false;
-            GunSystemv2 gunScript = weapon.GetComponent<GunSystemv2>();
-            if (gunScript)
-            {
-	            gunScript.enabled = true;
-            }
-            // If colliders exist, they should ALL be disabled below. or maybe we could just disable the item picker
+            //weapon.GetComponent<Rigidbody>().detectCollisions = false;// removed RB
+            //GunSystemv2 gunScript = weapon.GetComponent<GunSystemv2>(); 
         }
 
         public void PullOutGun()
         {
 	        selectedEquipment = 1;
         }
-        
+
+        private GameObject getWeaponHandHolder(string wepInfo)
+        {
+	        if (wepInfo == "Melee1H")
+		        return handHolderMelee;
+	        else return handHolderRanged;
+        }
         
         /// <summary>
-        	/// Catches MMInventoryEvents and if it's an "inventory loaded" one, toggles the cameras ability to rotation 
-        	/// </summary>
-        	/// <param name="inventoryEvent">Inventory event.</param>
-        	public virtual void OnMMEvent(MMInventoryEvent inventoryEvent)
+        /// Catches MMInventoryEvents and if it's an "inventory loaded" one, toggles the cameras ability to rotation 
+        /// </summary>
+        /// <param name="inventoryEvent">Inventory event.</param>
+        public virtual void OnMMEvent(MMInventoryEvent inventoryEvent)
+        {
+            if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryOpens)
+            {
+                //Cursor.lockState = CursorLockMode.None;
+                //cmInput.enabled = false;
+            }
+            if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryCloses)
+            {
+                //Cursor.lockState = CursorLockMode.Locked;
+                //cmInput.enabled = true;
+            }
+            
+            
+        	/*if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryLoaded)
         	{
-                if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryOpens)
-                {
-	                //Cursor.lockState = CursorLockMode.None;
-	                //cmInput.enabled = false;
-                }
-                if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryCloses)
-                {
-	                //Cursor.lockState = CursorLockMode.Locked;
-	                //cmInput.enabled = true;
-                }
-                
-                
-        		/*if (inventoryEvent.InventoryEventType == MMInventoryEventType.InventoryLoaded)
+        		if (inventoryEvent.TargetInventoryName == "RogueArmorInventory")
         		{
-        			if (inventoryEvent.TargetInventoryName == "RogueArmorInventory")
+        			if (ArmorInventory != null)
         			{
-        				if (ArmorInventory != null)
+        				if (!InventoryItem.IsNull(ArmorInventory.Content [0]))
         				{
-        					if (!InventoryItem.IsNull(ArmorInventory.Content [0]))
-        					{
-        						ArmorInventory.Content [0].Equip (PlayerID);	
-        					}
+        					ArmorInventory.Content [0].Equip (PlayerID);	
         				}
         			}
-        			if (inventoryEvent.TargetInventoryName == "PlayerWeaponInventory")
-                    {
-                        Debug.Log("Player weapon event detected!!!! RAISE ALARM");
-        				if (WeaponInventory != null)
+        		}
+        		if (inventoryEvent.TargetInventoryName == "PlayerWeaponInventory")
+                {
+                    Debug.Log("Player weapon event detected!!!! RAISE ALARM");
+        			if (WeaponInventory != null)
+        			{
+        				if (!InventoryItem.IsNull (WeaponInventory.Content [0]))
         				{
-        					if (!InventoryItem.IsNull (WeaponInventory.Content [0]))
-        					{
-                                Debug.Log("Imported code completed Job!");
-        						WeaponInventory.Content [0].Equip (PlayerID);
-        					}
+                            Debug.Log("Imported code completed Job!");
+        					WeaponInventory.Content [0].Equip (PlayerID);
         				}
         			}
-        		}*/
-        	}
-    
-        	/// <summary>
-        	/// On Enable, we start listening to MMInventoryEvents
-        	/// </summary>
-        	protected virtual void OnEnable()
-        	{
-        		this.MMEventStartListening<MMInventoryEvent>();
-        	}
-    
-    
-        	/// <summary>
-        	/// On Disable, we stop listening to MMInventoryEvents
-        	/// </summary>
-        	protected virtual void OnDisable()
-        	{
-        		this.MMEventStopListening<MMInventoryEvent>();
-        	}
-    
-            public int WeaponTypeInt { get => weaponTypeInt; }
+        		}
+        	}*/
+        }
+
+        /// <summary>
+        /// On Enable, we start listening to MMInventoryEvents
+        /// </summary>
+        protected virtual void OnEnable()
+        {
+        	this.MMEventStartListening<MMInventoryEvent>();
+        }
+
+
+        /// <summary>
+        /// On Disable, we stop listening to MMInventoryEvents
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+        	this.MMEventStopListening<MMInventoryEvent>();
+        }
+
+        public int WeaponTypeInt { get => weaponTypeInt; }
     }
 }
 

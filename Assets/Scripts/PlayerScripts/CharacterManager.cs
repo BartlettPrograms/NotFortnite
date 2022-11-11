@@ -321,7 +321,7 @@ namespace PhysicsBasedCharacterController
         private void CheckGrounded()
         {
             prevGrounded = isGrounded;
-            isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, originalColliderHeight / 2f, 0), groundCheckerThreshold, groundMask);
+            isGrounded = Physics.CheckSphere(transform.position - new Vector3(0, originalColliderHeight / 2, 0), groundCheckerThreshold, groundMask);
             if (isGrounded)
             {
                 animator.SetBool("IsGrounded", true);
@@ -567,7 +567,7 @@ namespace PhysicsBasedCharacterController
                 
                 isCrouch = false;
                 collider.height = originalColliderHeight;
-                collider.center = playerHeightCorrection;
+                //collider.center = Vector3.zero;// new Vector3(0f, originalColliderHeight / 2f, 0f);
 
                 //headPoint.position = new Vector3(transform.position.x + POV_normalHeadHeight.x, transform.position.y + POV_normalHeadHeight.y, transform.position.z + POV_normalHeadHeight.z);
             }
@@ -842,7 +842,7 @@ namespace PhysicsBasedCharacterController
 
                 //ground and slope
                 Gizmos.color = Color.blue;
-                Gizmos.DrawWireSphere(transform.position - new Vector3(0, originalColliderHeight / 2f, 0), groundCheckerThreshold);
+                Gizmos.DrawWireSphere(transform.position - new Vector3(0, originalColliderHeight / 2, 0), groundCheckerThreshold);
 
                 Gizmos.color = Color.green;
                 Gizmos.DrawWireSphere(transform.position - new Vector3(0, originalColliderHeight / 2f, 0), slopeCheckerThreshold);
@@ -914,6 +914,11 @@ namespace PhysicsBasedCharacterController
 
         #endregion
 
+        // Extras by Matt
+        public void TriggerAttack(int attackNumber)
+        {
+            animator.SetTrigger("Attack" + attackNumber);
+        }
         
     }
 }

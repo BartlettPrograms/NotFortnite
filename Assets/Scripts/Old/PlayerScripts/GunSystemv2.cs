@@ -1,4 +1,5 @@
 using EnemyAI;
+using MoreMountains.InventoryEngine;
 using PhysicsBasedCharacterController;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -6,7 +7,8 @@ using UnityEngine.InputSystem;
 public class GunSystemv2 : MonoBehaviour
 {
     //Gun stats
-    [SerializeField] private int damage;
+    [SerializeField] private WeaponItem metaGun;
+    private float damage;
     [SerializeField] private float bulletSpeed = 12f;
     [SerializeField] private float shootIntoAirDistance, timeBetweenShooting, spread, range, reloadTime, timeBetweenBFShots; // timeBetweenShots = Burstfire variable. timeBetweenShooting = Automatic variable.
     [SerializeField] private int magazineSize, bulletsPerTap;
@@ -46,7 +48,7 @@ public class GunSystemv2 : MonoBehaviour
 
     private void Awake()
     {
-        bulletParent = GameObject.FindWithTag("BulletParent").transform;
+        //bulletParent = GameObject.FindWithTag("BulletParent").transform;
         fpsCam = Camera.main;
         fpsCamTransform = fpsCam.transform;
         attackPoint = gameObject.transform.GetChild(0);
@@ -59,6 +61,11 @@ public class GunSystemv2 : MonoBehaviour
 
         // Assign audio
         audio = gameObject.GetComponent<AudioSource>();
+        audio.clip = gunshotAudio;
+        
+        // Assign gun stats
+        damage = metaGun.damage;
+        
         _characterManager = transform.root.GetComponent<CharacterManager>(); // Player must be at hierarchy root or will throw error.
     }
 
@@ -70,6 +77,8 @@ public class GunSystemv2 : MonoBehaviour
         if (_characterManager.Strafing && readyToShoot && isShooting && !reloading && bulletsLeft > 0)
         {
             shoot();
+            // Trigger shoot animation
+            _characterManager.TriggerAttack(1);
         }
         // No ammo, trigger pulled
         if (bulletsLeft <= 0 && triggerExtra && readyToShoot && !reloading)
@@ -80,16 +89,16 @@ public class GunSystemv2 : MonoBehaviour
         }
     }
 
-    // Scan guns aim and look for enemy to hit
+    // Scan guns aim and look for enemy to hit.. if enemy down aim sights then fire!
     private void checkAimTarget()
     {
-        // Intermittently shoot raycast
+        /*// Intermittently shoot raycast
         scanTimer += Time.deltaTime;
         if (scanTimer >= 0.2)
         {
             // Reset timer
             scanTimer = 0;
-
+*/
             // Shoot Raycast
             RaycastHit scanRay;
 
@@ -101,7 +110,7 @@ public class GunSystemv2 : MonoBehaviour
                     isShooting = true;
                 }
             }
-        }
+        //}
     }
 
     // Old Shooting script

@@ -5,9 +5,11 @@ using UnityEngine;
 public class CameraRotate : MonoBehaviour
 {
     [SerializeField] private float rotateSpeed = 1f;
+    [SerializeField] private GameObject rotateAround;
     
     void FixedUpdate()
     {
-        transform.Rotate(0, rotateSpeed, 0 * Time.deltaTime);
+        float edit = transform.rotation.y;
+        //transform.rotation = transform.rotation.y + rotateSpeed * Time.deltaTime;
     }
 }

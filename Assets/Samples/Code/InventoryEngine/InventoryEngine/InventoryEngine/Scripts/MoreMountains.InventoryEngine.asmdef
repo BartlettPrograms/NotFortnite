@@ -1,11 +1,24 @@
 {
     "name": "MoreMountains.InventoryEngine",
+    "rootNamespace": "",
     "references": [
         "GUID:4a1cb1490dc4df8409b2580d6b44e75e",
         "GUID:75469ad4d38634e559750d17036d5f7c"
     ],
     "includePlatforms": [],
-    "excludePlatforms": [],
+    "excludePlatforms": [
+        "GameCoreScarlett",
+        "GameCoreXboxOne",
+        "CloudRendering",
+        "Lumin",
+        "PS4",
+        "PS5",
+        "QNX",
+        "Stadia",
+        "Switch",
+        "tvOS",
+        "XboxOne"
+    ],
     "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],

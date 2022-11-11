@@ -330,6 +330,7 @@ namespace MoreMountains.InventoryEngine
 
 			StartCoroutine(MMFade.FadeCanvasGroup(TargetInventoryContainer, 0.2f, 1f));
 			StartCoroutine(MMFade.FadeCanvasGroup(Overlay, 0.2f, 0.85f));
+			
 		}
 
 		/// <summary>

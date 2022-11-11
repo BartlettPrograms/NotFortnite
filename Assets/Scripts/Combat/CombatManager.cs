@@ -17,7 +17,7 @@ namespace PlayerCombatController
         public InputReader input;
 
         [Header("Attacking")]
-        [SerializeField] private int _damage = 10;
+        [SerializeField] private float _damage = 10f;
         [SerializeField] private GameObject _hitSparkPrefab;
         [SerializeField] private Comp_Equipment Equipment;
         
@@ -41,8 +41,8 @@ namespace PlayerCombatController
 
         private List<GameObject> _objectsHit = new List<GameObject>();
         
-        int IHitResponder.Damage { get => _damage; }
-
+        float IHitResponder.Damage { get => _damage; }
+        
         public bool IsAttacking { get => attacking; } // animator uses this
         //public bool AttackInput { get => attack; }
 
@@ -158,7 +158,7 @@ namespace PlayerCombatController
             }
         }
 
-        public int Damage { get; }
+        public float Damage { get => _damage; set => _damage = value; }
         
         public bool CheckHit(HitData data)
         {
